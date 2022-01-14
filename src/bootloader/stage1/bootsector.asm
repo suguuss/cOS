@@ -26,8 +26,5 @@ main:
 ;trouver comment jump la bas
 jmp 0xc00:0
 
-
-@ jmp $ ; jump to current address = infinite loop
-
 times 510 - ($ - $$) db 0x00
 db 0x55, 0xAA
