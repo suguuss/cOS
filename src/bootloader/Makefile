@@ -9,11 +9,12 @@ SRC_STAGE2=stage2
 
 bootloader: fat stage1
 
-run: bootloader
-	qemu-system-x86_64 $(BUILD_DIR)/fat.bin
+run:
+	qemu-system-x86_64 $(BUILD_DIR)/os.bin
 
 stage1: $(BUILD_DIR)/bootsector.bin
-	dd if=$< of=$(BUILD_DIR)/fat.bin conv=notrunc
+	@echo overwriting the bootsector with the bootloader...
+	@dd if=$< of=$(BUILD_DIR)/os.bin conv=notrunc status=none
 
 $(BUILD_DIR)/bootsector.bin: $(SRC_STAGE1)/bootsector.asm pre-build
 	$(ASM) $(ASM_FLAGS) $< -o $@
@@ -24,12 +25,16 @@ $(BUILD_DIR)/stage2.bin: $(SRC_STAGE2)/stage2.asm pre-build
 	$(ASM) $(ASM_FLAGS) $< -o $@
 
 fat: stage2
-	dd if=/dev/zero of=$(BUILD_DIR)/fat.bin bs=512 count=4096
-	mkfs.fat -F 32 -n boot $(BUILD_DIR)/fat.bin
-	mcopy -i $(BUILD_DIR)/fat.bin $(BUILD_DIR)/stage2.bin "::stage2.bin"
+	@echo Creating the empty FAT32 disk...
+	@dd if=/dev/zero of=$(BUILD_DIR)/os.bin bs=512 count=4096 status=none
+	@mkfs.fat -I -F 32 -n boot $(BUILD_DIR)/os.bin 2> /dev/null 1> /dev/null
+	@# mcopy -i $(BUILD_DIR)/os.bin $(BUILD_DIR)/stage2.bin "::stage2.bin"
+	@echo Copying the 2nd stage...
+	@dd if=$(BUILD_DIR)/stage2.bin of=$(BUILD_DIR)/os.bin seek=2 conv=notrunc status=none
 	
 pre-build:
 	@mkdir -p $(BUILD_DIR)
 
 clean:
-	rm -rf $(BUILD_DIR)/*
+	@echo cleaning the content of : $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)/*
