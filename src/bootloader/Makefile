@@ -9,7 +9,7 @@ SRC_STAGE2=stage2
 
 bootloader: fat stage1
 
-run:
+run: bootloader
 	qemu-system-x86_64 $(BUILD_DIR)/fat.bin
 
 stage1: $(BUILD_DIR)/bootsector.bin

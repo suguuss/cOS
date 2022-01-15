@@ -1,3 +1,6 @@
+org 0x0000
+bits 16
+
 main:
 	mov ah, 0x0e ; Enter tty mode
 	mov al, 'S'
