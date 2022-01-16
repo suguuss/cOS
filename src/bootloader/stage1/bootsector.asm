@@ -3,7 +3,7 @@ bits 16
 
 
 ; FAT32 Header
-jmp near main
+jmp main
 nop
 db 0x4d, 0x53, 0x57, 0x49, 0x4e, 0x34, 0x2e, 0x31, 0x00, 0x02, 0x01, 0x20, 0x00, 0x02, 0x00, 0x00, 0x00, 0x10, 0xF8, 0x00, 0x00, 0x10, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00, 0x29, 0xF1, 0x4E, 0x48, 0x2E, 0x62, 0x6F, 0x6F, 0x74, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x46, 0x41, 0x54, 0x33, 0x32, 0x20, 0x20, 0x20, 0x0E, 0x1F, 0xBE, 0x77, 0x7C, 0xAC, 0x22, 0xC0, 0x74, 0x0B, 0x56, 0xB4, 0x0E, 0xBB, 0x07, 0x00, 0xCD, 0x10, 0x5E, 0xEB, 0xF0, 0x32, 0xE4, 0xCD, 0x16, 0xCD, 0x19, 0xEB, 0xFE, 0x54, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x6E, 0x6F, 0x74, 0x20, 0x61, 0x20, 0x62, 0x6F, 0x6F, 0x74, 0x61, 0x62, 0x6C, 0x65, 0x20, 0x64, 0x69, 0x73, 0x6B, 0x2E, 0x20, 0x20, 0x50, 0x6C, 0x65, 0x61, 0x73, 0x65, 0x20, 0x69, 0x6E, 0x73, 0x65, 0x72, 0x74, 0x20, 0x61, 0x20, 0x62, 0x6F, 0x6F, 0x74, 0x61, 0x62, 0x6C, 0x65, 0x20, 0x66, 0x6C, 0x6F, 0x70, 0x70, 0x79, 0x20, 0x61, 0x6E, 0x64, 0x0D, 0x0A, 0x70, 0x72, 0x65, 0x73, 0x73, 0x20, 0x61, 0x6E, 0x79, 0x20, 0x6B, 0x65, 0x79, 0x20, 0x74, 0x6F, 0x20, 0x74, 0x72, 0x79, 0x20, 0x61, 0x67, 0x61, 0x69, 0x6E, 0x20, 0x2E, 0x2E, 0x2E, 0x20, 0x0D, 0x0A, 0x00
 
@@ -24,13 +24,41 @@ init_read_disk:
 	mov cl, 3			; Read the 3rd sector (offset 0x400 in hexedit)
 	
 read_disk:
-	mov ah, 0x02 		; int 13/2 : read disk sector
-	mov al, 0x01		; nb of sector to read
+	mov ah, 0x42 		; int 13/42h : Extended read disk sector
+	; mov al, 0x01		; nb of sector to read
+    mov si, DAP
 	int 0x13
 
 	jc error			; if carry bit is 1 -> there is an error
 
 	jmp 0x1000:0		; jumps to where we loaded the second stage 
+
+DAP:
+    db 0x10
+    db 0
+    dw 1
+    dd 0x10000000
+    dq 97
+
+
+; init_read_disk:
+; 	mov bx, 0x1000		; Loads sector into memory at addr 0x1000:0
+; 	mov es, bx
+; 	mov bx, 0x0
+	
+; 	mov dh, 0x0			; head 0
+; 	mov dl, 0x80		; drive 0
+; 	mov ch, 0x0			; cylinder number 0
+; 	mov cl, 3			; Read the 3rd sector (offset 0x400 in hexedit)
+	
+; read_disk:
+; 	mov ah, 0x02 		; int 13/2 : read disk sector
+; 	mov al, 0x01		; nb of sector to read
+; 	int 0x13
+
+; 	jc error			; if carry bit is 1 -> there is an error
+
+; 	jmp 0x1000:0		; jumps to where we loaded the second stage 
 
 
 error:
@@ -49,40 +77,40 @@ error:
 ; Outputs:
 ;   No.
 ;==============================================================================
-PrintHex:
-    pusha
+; PrintHex:
+;     pusha
 
-    mov CX, BX                          ; Save the original number to CX.
+;     mov CX, BX                          ; Save the original number to CX.
 
-    mov SI, .alphabet                   ; Use SI as base for .alphabet array.
+;     mov SI, .alphabet                   ; Use SI as base for .alphabet array.
 
-    shr BX, 12                          ; Get the first 4 bits of the original number (0x[1]234).
-    mov AL, [BX + SI]                   ; Use it as index in the array of hexadecimal digits. Thus get the appropriate character.
-    mov [.result + 2], AL               ; Copy the character to the output array.
-                                        ; In other words, these instuctions mean result[2] = alphabet[BX].
+;     shr BX, 12                          ; Get the first 4 bits of the original number (0x[1]234).
+;     mov AL, [BX + SI]                   ; Use it as index in the array of hexadecimal digits. Thus get the appropriate character.
+;     mov [.result + 2], AL               ; Copy the character to the output array.
+;                                         ; In other words, these instuctions mean result[2] = alphabet[BX].
 
-    mov BX, CX                          ; Restore the original number.
-    shr BX, 8                           ; Get the second 4 bits of the original number (0x1[2]34).
-    and BX, 0x0F                        ; We have to apply mask 0x0F to the value in order to get exactly 4 bits.
-    mov AL, [BX + SI]                   ; AL = alphabet[BX].
-    mov [.result + 3], AL               ; result[3] = AL.
+;     mov BX, CX                          ; Restore the original number.
+;     shr BX, 8                           ; Get the second 4 bits of the original number (0x1[2]34).
+;     and BX, 0x0F                        ; We have to apply mask 0x0F to the value in order to get exactly 4 bits.
+;     mov AL, [BX + SI]                   ; AL = alphabet[BX].
+;     mov [.result + 3], AL               ; result[3] = AL.
 
-    mov BX, CX                          ; Restore the original number.
-    shr BX, 4                           ; Get the third 4 bits of the original number (0x12[3]4).
-    and BX, 0x0F                        ;
-    mov AL, [BX + SI]                   ; AL = alphabet[BX].
-    mov [.result + 4], AL               ; result[4] = AL.
+;     mov BX, CX                          ; Restore the original number.
+;     shr BX, 4                           ; Get the third 4 bits of the original number (0x12[3]4).
+;     and BX, 0x0F                        ;
+;     mov AL, [BX + SI]                   ; AL = alphabet[BX].
+;     mov [.result + 4], AL               ; result[4] = AL.
 
-    mov BX, CX                          ; Restore the original number.
-    and BX, 0x0F                        ; Get the last 4 bits of the original number (0x123[4]).
-    mov AL, [BX + SI]                   ; AL = alphabet[BX].
-    mov [.result + 5], AL               ; result[5] = AL.
+;     mov BX, CX                          ; Restore the original number.
+;     and BX, 0x0F                        ; Get the last 4 bits of the original number (0x123[4]).
+;     mov AL, [BX + SI]                   ; AL = alphabet[BX].
+;     mov [.result + 5], AL               ; result[5] = AL.
 
-    mov BX, .result                     ; Print the result.
-    call WriteString                    ;
+;     mov BX, .result                     ; Print the result.
+;     call WriteString                    ;
 
-    popa
-    ret
+;     popa
+;     ret
 
 .alphabet:
     db '0123456789ABCDEF', 0x0

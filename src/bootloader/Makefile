@@ -28,9 +28,9 @@ fat: stage2
 	@echo Creating the empty FAT32 disk...
 	@dd if=/dev/zero of=$(BUILD_DIR)/os.bin bs=512 count=4096 status=none
 	@mkfs.fat -I -F 32 -n boot $(BUILD_DIR)/os.bin 2> /dev/null 1> /dev/null
-	@# mcopy -i $(BUILD_DIR)/os.bin $(BUILD_DIR)/stage2.bin "::stage2.bin"
+	mcopy -i $(BUILD_DIR)/os.bin $(BUILD_DIR)/stage2.bin "::stage2.bin"
 	@echo Copying the 2nd stage...
-	@dd if=$(BUILD_DIR)/stage2.bin of=$(BUILD_DIR)/os.bin seek=2 conv=notrunc status=none
+	@#dd if=$(BUILD_DIR)/stage2.bin of=$(BUILD_DIR)/os.bin seek=2 conv=notrunc status=none
 	
 pre-build:
 	@mkdir -p $(BUILD_DIR)
