@@ -12,20 +12,11 @@ main:
 	mov bx, booted
 	call WriteString
 
-
-init_read_disk:
-	mov bx, 0x1000		; Loads sector into memory at addr 0x1000:0
-	mov es, bx
-	mov bx, 0x0
-	
-	mov dh, 0x0			; head 0
-	mov dl, 0x80		; drive 0
-	mov ch, 0x0			; cylinder number 0
-	mov cl, 3			; Read the 3rd sector (offset 0x400 in hexedit)
+    jmp read_disk
 	
 read_disk:
 	mov ah, 0x42 		; int 13/42h : Extended read disk sector
-	; mov al, 0x01		; nb of sector to read
+    mov dl, 0x80
     mov si, DAP
 	int 0x13
 
@@ -33,33 +24,13 @@ read_disk:
 
 	jmp 0x1000:0		; jumps to where we loaded the second stage 
 
+; https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=42h:_Extended_Read_Sectors_From_Drive
 DAP:
-    db 0x10
-    db 0
-    dw 1
-    dd 0x10000000
-    dq 97
-
-
-; init_read_disk:
-; 	mov bx, 0x1000		; Loads sector into memory at addr 0x1000:0
-; 	mov es, bx
-; 	mov bx, 0x0
-	
-; 	mov dh, 0x0			; head 0
-; 	mov dl, 0x80		; drive 0
-; 	mov ch, 0x0			; cylinder number 0
-; 	mov cl, 3			; Read the 3rd sector (offset 0x400 in hexedit)
-	
-; read_disk:
-; 	mov ah, 0x02 		; int 13/2 : read disk sector
-; 	mov al, 0x01		; nb of sector to read
-; 	int 0x13
-
-; 	jc error			; if carry bit is 1 -> there is an error
-
-; 	jmp 0x1000:0		; jumps to where we loaded the second stage 
-
+    db 0x10             ; Size of DAP
+    db 0                ; Unused, should be 0
+    dw 1                ; nb of sector to be read
+    dd 0x10000000       ; segment:offset to load into (0x1000:0)
+    dq 97               ; Sector to read
 
 error:
 	mov bx, err_string
