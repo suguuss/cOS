@@ -1,6 +1,15 @@
 # cOS, an OS made in C
 
 
+
+## Dependencies
+
+```
+make
+nasm
+mtools
+```
+
 ## Repository structure
 ```
 cOS
