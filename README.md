@@ -22,10 +22,6 @@ make nasm mtools
 ├── README.md
 └── src
     └── bootloader
-        ├── build
-        │   ├── bootsector.bin
-        │   ├── os.bin
-        │   └── stage2.bin
         ├── Makefile
         ├── stage1
         │   └── bootsector.asm

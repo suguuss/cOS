@@ -5,3 +5,5 @@ https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md
 https://github.com/cfenollosa/os-tutorial
 
 https://fr.wikipedia.org/wiki/INT_10H
+
+https://wiki.osdev.org/Global_Descriptor_Table
