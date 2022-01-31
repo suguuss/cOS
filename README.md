@@ -5,9 +5,7 @@
 ## Dependencies
 
 ```
-make
-nasm
-mtools
+make nasm mtools
 ```
 
 ## Repository structure

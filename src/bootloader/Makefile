@@ -22,6 +22,7 @@ $(BUILD_DIR)/bootsector.bin: $(SRC_STAGE1)/bootsector.asm pre-build
 stage2: $(BUILD_DIR)/stage2.bin
 
 $(BUILD_DIR)/stage2.bin: $(SRC_STAGE2)/stage2.asm pre-build
+	@echo Building the second stage
 	$(ASM) $(ASM_FLAGS) $< -o $@
 
 fat: stage2
