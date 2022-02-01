@@ -9,132 +9,57 @@ db 0x4d, 0x53, 0x57, 0x49, 0x4e, 0x34, 0x2e, 0x31, 0x00, 0x02, 0x01, 0x20, 0x00,
 
 
 main:
-	mov bx, booted
-	call WriteString
+	CODE_SEG equ GDT_code - GDT_Start
+	DATA_SEG equ GDT_data - GDT_Start
 
-    jmp read_disk
-	
-read_disk:
-	mov ah, 0x42 		; int 13/42h : Extended read disk sector
-    mov dl, 0x80
-    mov si, DAP
-	int 0x13
+	cli						; Disable the interrupt 
+	lgdt [GDT_Descriptor] 	; Loads the GDT
+	mov eax, cr0			; Sets Protected Mode bit to 1
+	or eax, 1
+	mov cr0, eax
 
-	jc error			; if carry bit is 1 -> there is an error
-
-	jmp 0x1000:0		; jumps to where we loaded the second stage 
-
-; https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=42h:_Extended_Read_Sectors_From_Drive
-DAP:
-    db 0x10             ; Size of DAP
-    db 0                ; Unused, should be 0
-    dw 1                ; nb of sector to be read
-    dd 0x10000000       ; segment:offset to load into (0x1000:0)
-    dq 97               ; Sector to read
-
-error:
-	mov bx, err_string
-	call WriteString
+	; Jumps to 32 bits segment 
+	jmp CODE_SEG:start_protected_mode
 
 	jmp $
 
-;==============================================================================
-; PROCEDURE PrintHex
-;
-; Description:
-;   Prints content of BX in form "0x0000" in teletype mode.
-; Inputs:
-;   BX: number to print.
-; Outputs:
-;   No.
-;==============================================================================
-; PrintHex:
-;     pusha
 
-;     mov CX, BX                          ; Save the original number to CX.
+; GLOBAL DESCRIPTOR TABLE
+; https://wiki.osdev.org/Global_Descriptor_Table
+GDT_Start:
+	GDT_null:
+		dq 0	; First entry is null
+	GDT_code:
+		; base  = 0
+		; limit = 0xfffff
+		dw 0xffff	; limit bits 0-15
+		dw 0		; base  bits 0-15
+		db 0		; base  bits 16-23
+		db 0x9A		; Access byte
+		db 0xCF		; Flags + limit bits 16-19
+		db 0		; base 	bits 24-31
+	GDT_data:
+		; base  = 0
+		; limit = 0xfffff
+		dw 0xffff	; limit bits 0-15
+		dw 0		; base  bits 0-15
+		db 0		; base  bits 16-23
+		db 0x92		; Access byte
+		db 0xCF		; Flags + limit bits 16-19
+		db 0		; base 	bits 24-31
+GDT_End:
 
-;     mov SI, .alphabet                   ; Use SI as base for .alphabet array.
+GDT_Descriptor:
+	dw GDT_End - GDT_Start - 1 	; Size
+	dd GDT_Start				; Start
 
-;     shr BX, 12                          ; Get the first 4 bits of the original number (0x[1]234).
-;     mov AL, [BX + SI]                   ; Use it as index in the array of hexadecimal digits. Thus get the appropriate character.
-;     mov [.result + 2], AL               ; Copy the character to the output array.
-;                                         ; In other words, these instuctions mean result[2] = alphabet[BX].
 
-;     mov BX, CX                          ; Restore the original number.
-;     shr BX, 8                           ; Get the second 4 bits of the original number (0x1[2]34).
-;     and BX, 0x0F                        ; We have to apply mask 0x0F to the value in order to get exactly 4 bits.
-;     mov AL, [BX + SI]                   ; AL = alphabet[BX].
-;     mov [.result + 3], AL               ; result[3] = AL.
-
-;     mov BX, CX                          ; Restore the original number.
-;     shr BX, 4                           ; Get the third 4 bits of the original number (0x12[3]4).
-;     and BX, 0x0F                        ;
-;     mov AL, [BX + SI]                   ; AL = alphabet[BX].
-;     mov [.result + 4], AL               ; result[4] = AL.
-
-;     mov BX, CX                          ; Restore the original number.
-;     and BX, 0x0F                        ; Get the last 4 bits of the original number (0x123[4]).
-;     mov AL, [BX + SI]                   ; AL = alphabet[BX].
-;     mov [.result + 5], AL               ; result[5] = AL.
-
-;     mov BX, .result                     ; Print the result.
-;     call WriteString                    ;
-
-;     popa
-;     ret
-
-.alphabet:
-    db '0123456789ABCDEF', 0x0
-
-.result:
-    db '0x0000', 0x0
-;==============================================================================
-; PROCEDURE WriteString
-;
-; Description:
-;   Writes a null-terminated string to the screen using BIOS teletype mode text
-;   writing.
-; Inputs:
-;   BX: address of the string.
-; Outputs:
-;   No.
-;==============================================================================
-WriteString:
-    pusha
-    mov SI, 0                           ; Use SI as index in the string.
-.loop:
-    mov AL, [BX + SI]                   ; Move the current character at the string into AL.
-
-    cmp AL, 0x0                         ; If the current character is null-terminator, then
-    je .break                           ; break the loop.
-
-    call WriteCharInTeletypeMode        ; Otherwise print it.
-
-    inc SI                              ; Increment index and
-    jmp .loop                           ; jump to the beginning.
-.break:
-    popa
-    ret
-
-;==============================================================================
-; PROCEDURE WriteCharInTeletypeMode
-;
-; Description:
-;   Writes a character in teletype mode using BIOS interrupts.
-; Inputs:
-;   AL: character.
-; Outputs:
-;   No.
-;==============================================================================
-WriteCharInTeletypeMode:
-    pusha
-    mov AH, 0xE                         ; Select BIOS function teletype mode text writing.
-    int 0x10
-    popa
-    ret
-
-booted: db 'Booted', 0x0D, 0x0A, 0
-err_string: db 'fail', 0
+[bits 32]
+start_protected_mode:
+	mov al, 'A'
+	mov ah, 0x0f
+	mov [0xb8000], ax
+	jmp $
 
 times 510 - ($ - $$) db 0x00
 db 0x55, 0xAA
