@@ -94,10 +94,6 @@ GDT_Descriptor:
 [bits 32]
 start_protected_mode:
 	; Loads the IDT		; https://wiki.osdev.org/Printing_To_Screen
-	mov al, 'C'			; Char to be printed
-	mov ah, 0x5f 		; Set the char color - b0000'0000 Background'Foreground
-	mov [0xB8000], ax 	; 0XB8000 is the beginning of colored text video memory
-
 	mov ax, DATA_SEG
 	mov ds, ax
 	mov ss, ax
@@ -107,8 +103,6 @@ start_protected_mode:
 	
 	mov ebp, 0x90000		; 32 bit stack base pointer
 	mov esp, ebp
-
-	; jmp $
 
 	jmp KERNEL_ADDR
 
