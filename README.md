@@ -47,6 +47,9 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
 ├── LICENSE
 ├── Makefile
 ├── README.md
+├── scripts
+│   ├── setup-gcc-arch.sh
+│   └── setup-gcc-ubuntu.sh
 └── src
     ├── bootloader
     │   ├── bootsector.asm
