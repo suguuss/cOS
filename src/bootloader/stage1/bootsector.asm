@@ -32,6 +32,7 @@ main:
 	jmp CODE_SEG:start_protected_mode
 
 
+; --------------------------------------------------
 ; ------------ GLOBAL DESCRIPTOR TABLE -------------
 ; --------------------------------------------------
 ;   https://wiki.osdev.org/Global_Descriptor_Table  
@@ -70,8 +71,8 @@ GDT_Descriptor:
 start_protected_mode:
 						; https://wiki.osdev.org/Printing_To_Screen
 	mov al, '.'			; Char to be printed
-	mov ah, 0x5f 		; Set the char color - b0000'0000 Background'Foreground
-	mov [0xB800A], ax 	; 0XB8000 is the beginning of colored text video memory
+	mov ah, 0xf0		; Set the char color - b0000'0000 Background'Foreground
+	mov [0xB8000], ax 	; 0XB8000 is the beginning of colored text video memory
 	jmp $
 
 times 510 - ($ - $$) db 0x00
