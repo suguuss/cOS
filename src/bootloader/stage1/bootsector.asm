@@ -2,6 +2,8 @@ org 0x7C00		; Base adress of the bootloader
 				; Shifts the address by the offset of the bootloader
 bits 16
 
+KERNEL_ADDR equ 0x1000
+
 ; --------------------------------------------------
 ; ----------------- FAT 32 HEADER ------------------
 ; --------------------------------------------------
@@ -17,6 +19,27 @@ main:
 	CODE_SEG equ GDT_code - GDT_Start
 	DATA_SEG equ GDT_data - GDT_Start
 
+	xor ax, ax
+	mov es, ax
+	mov ds, ax
+	mov bp, 0x8000
+	mov sp, bp
+
+	mov bx, KERNEL_ADDR		; Where to load the kernel es:bx
+	mov dh, 2				; Number of sector to read
+
+	mov ah, 0x02			; Read Sector from drive
+	mov al, dh 				; Number of sector to read
+	mov ch, 0x00			; Cylinder
+	mov dh, 0x00			; Head
+	mov cl, 0x02			; Sector nb (Starts at 1)
+	int 0x13
+
+	; Clear the screen
+	mov ah, 0x0
+	mov al, 0x3
+	int 0x10                ; text mode
+
 	; --------------------------------------------------
 	; ------------ SWITHCING TO PROTECTED MODE ---------
 	; --------------------------------------------------
@@ -30,6 +53,8 @@ main:
 
 	; Jumps to 32 bits segment
 	jmp CODE_SEG:start_protected_mode
+
+	jmp $
 
 
 ; --------------------------------------------------
@@ -69,11 +94,18 @@ GDT_Descriptor:
 ; --------------------------------------------------
 [bits 32]
 start_protected_mode:
-						; https://wiki.osdev.org/Printing_To_Screen
-	mov al, '.'			; Char to be printed
-	mov ah, 0xf0		; Set the char color - b0000'0000 Background'Foreground
-	mov [0xB8000], ax 	; 0XB8000 is the beginning of colored text video memory
-	jmp $
+	; Loads the IDT		; https://wiki.osdev.org/Printing_To_Screen
+	mov ax, DATA_SEG
+	mov ds, ax
+	mov ss, ax
+	mov es, ax
+	mov fs, ax
+	mov gs, ax
+	
+	mov ebp, 0x90000		; 32 bit stack base pointer
+	mov esp, ebp
+
+	jmp KERNEL_ADDR
 
 times 510 - ($ - $$) db 0x00
 db 0x55, 0xAA
