@@ -17,18 +17,22 @@ A collection of utilities for manipulating MS-DOS filesystems.
 
 ### Install on Manjaro / Arch	
 ```
-sudo pacman -S make nasm mtools
+sudo pacman -S make nasm qemu mtools
 ```
 
 ### Install on Ubuntu
 ```
-sudo apt-get install make nasm mtools
+sudo apt-get install make nasm qemu mtools 
 ```
 
 ### Install on Fedora / CentOS
 ```
-sudo dnf install make nasm mtools
+sudo dnf install make nasm qemu mtools
 ```
+
+### Building the cross compiler
+
+To build the cross compiler, you can use a script inside the `scripts` folder. The credit for the script goes to [mell-o-tron](https://github.com/mell-o-tron). If no script are available for your distro, you can refer to [this table](https://wiki.osdev.org/GCC_Cross-Compiler#Installing_Dependencies) from the osdev wiki and install the dependencies yourself.
 
 ## Repository structure
 ```
@@ -41,12 +45,14 @@ sudo dnf install make nasm mtools
 │   ├── schematics.drawio
 │   └── TODO.md
 ├── LICENSE
+├── Makefile
 ├── README.md
 └── src
-    └── bootloader
-        ├── Makefile
-        ├── stage1
-        │   └── bootsector.asm
-        └── stage2
-            └── stage2.asm
+    ├── bootloader
+    │   ├── bootsector.asm
+    │   └── Makefile
+    └── kernel
+        ├── kernel.c
+        ├── kernel_entry.asm
+        └── Makefile
 ```
