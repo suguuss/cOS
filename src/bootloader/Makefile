@@ -7,7 +7,7 @@ SRC_STAGE2=stage2
 
 .PHONY: pre-build clean stage1 stage2 bootloader run
 
-bootloader: fat stage1
+bootloader: pre-build fat stage1 
 
 run:
 	qemu-system-x86_64 $(BUILD_DIR)/os.bin
