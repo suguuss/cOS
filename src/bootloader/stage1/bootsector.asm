@@ -57,6 +57,7 @@ main:
 	jmp $
 
 
+; --------------------------------------------------
 ; ------------ GLOBAL DESCRIPTOR TABLE -------------
 ; --------------------------------------------------
 ;   https://wiki.osdev.org/Global_Descriptor_Table  
@@ -105,8 +106,6 @@ start_protected_mode:
 	mov esp, ebp
 
 	jmp KERNEL_ADDR
-
-
 
 times 510 - ($ - $$) db 0x00
 db 0x55, 0xAA
