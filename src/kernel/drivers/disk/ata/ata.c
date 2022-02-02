@@ -18,6 +18,10 @@
 static void wait_while_BSY();
 static void wait_while_DRQ();
 
+#define DATA_REG	0x1F0
+#define STATUS_REG 	0x1F7
+#define DRQ_BIT 	0x08
+#define BSY_BIT 	0x80
 
 // LBA (28bits)	-> Sector address
 // sectorcount 	-> nb of sector to read?

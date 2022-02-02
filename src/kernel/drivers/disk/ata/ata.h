@@ -11,11 +11,6 @@
 #include <stdint.h>
 #include "../../ports/ports.h"
 
-#define DATA_REG	0x1F0
-#define STATUS_REG 	0x1F7
-#define DRQ_BIT 	0x08
-#define BSY_BIT 	0x80
-
 void ata_read_sector(uint32_t LBA, uint8_t sectorcount, uint8_t *out);
 void ata_write_sector(uint32_t LBA, uint8_t sectorcount, uint8_t *in);
 
