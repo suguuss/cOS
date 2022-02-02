@@ -3,7 +3,6 @@
  * @brief PRINT FUNCTIONS 
  * @version 0.1
  * @date 02-02-2022
- * 
  */
 
 #ifndef __PRINT_H__
