@@ -1,6 +1,5 @@
 # cOS, an OS made in C
 
----
 ## Dependencies
 
 ### make
@@ -13,7 +12,7 @@ Compiles assembly code into machine code.
 A collection of utilities for manipulating MS-DOS filesystems.
 
 ---
-## Installation
+## Installation of the dependencies
 
 ### Install on Manjaro / Arch	
 ```
