@@ -11,7 +11,7 @@ CURRENT_DIR 			= $(shell pwd)
 export BUILD_DIR 		= $(CURRENT_DIR)/build
 
 
-.PHONY: all run os bootloader kernel pre-build
+.PHONY: all run os bootloader kernel pre-build clean
 
 all: os
 
@@ -45,8 +45,8 @@ $(BUILD_DIR)/bootloader.bin:
 # -------------------- KERNEL ----------------------
 # --------------------------------------------------
 kernel: $(BUILD_DIR)/kernel.bin
-	
-$(BUILD_DIR)/kernel.bin:
+
+$(BUILD_DIR)/kernel.bin: src/kernel/kernel.c
 	@$(MAKE) -s -C src/kernel
 
 
