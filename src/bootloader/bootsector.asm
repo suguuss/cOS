@@ -94,7 +94,6 @@ GDT_Descriptor:
 ; --------------------------------------------------
 [bits 32]
 start_protected_mode:
-	; Loads the IDT		; https://wiki.osdev.org/Printing_To_Screen
 	mov ax, DATA_SEG
 	mov ds, ax
 	mov ss, ax
