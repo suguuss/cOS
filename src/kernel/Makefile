@@ -20,9 +20,9 @@ $(BUILD_DIR)/kernel.bin: pre-build $(OBJECTS_TO_LINK)
 # --------------------------------------------------
 # --------------- GETTING OBJECTS ------------------
 # --------------------------------------------------
+# --------- KERNEL ENTRY ---------
 $(K_BUILD_DIR)/kernel_entry.o: kernel_entry.asm
 	$(ASM) $< -f elf -o $@
-
 
 # ------------ KERNEL ------------
 $(K_BUILD_DIR)/kernel.o: kernel.c

@@ -17,5 +17,6 @@
 #define BSY_BIT 	0x80
 
 void ata_read_sector(uint32_t LBA, uint8_t sectorcount, uint8_t *out);
+void ata_write_sector(uint32_t LBA, uint8_t sectorcount, uint8_t *in);
 
 #endif

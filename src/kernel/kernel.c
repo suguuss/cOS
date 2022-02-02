@@ -5,20 +5,14 @@
 extern int main()
 {
 	uint8_t *text = "Welcome to the cOS Kernel !";
-	// uint8_t *buffer = "ABCD";
 	uint8_t buffer[512];
 
-	// uint16_t test = ata_read_sector(97, 1, buffer);
-	ata_read_sector(97, 1, buffer);
 
-	// buffer[0] = 'A';
-	// buffer[1] = 'A';
-	// buffer[2] = 'A';
-	// buffer[3] = 'A';
-	// buffer[4] = 'D';
+	ata_write_sector(98, 1, text);
+	ata_read_sector(98, 1, buffer);
+
 
 	print(buffer);
-	// print(text);
 
 	return 0;
 }
