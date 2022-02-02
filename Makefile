@@ -1,3 +1,4 @@
+# export allow access from the lower makefiles 
 export CC 				= gcc
 export CFLAGS			= 
 export ASM 				= nasm
@@ -9,7 +10,7 @@ export TARGET_LD		= $(TARGET)-ld
 
 CURRENT_DIR 			= $(shell pwd)
 export BUILD_DIR 		= $(CURRENT_DIR)/build
-
+export BUILD_DIR 		= $(CURRENT_DIR)/build
 
 .PHONY: all run os bootloader kernel pre-build clean
 
@@ -18,14 +19,15 @@ all: os
 run: os
 	qemu-system-x86_64 -drive format=raw,file=$(BUILD_DIR)/os.bin,index=0
 
-
-# --------------------------------------------------
-# ----------------- CREATING DISK-------------------
-# --------------------------------------------------
+# ---------------------------------------------------
+# ----------------- CREATING DISK -------------------
+# ---------------------------------------------------
+# ------------- BUILDING THE WHOLE OS ---------------
+# ---------------------------------------------------
 os: $(BUILD_DIR)/os.bin
 
 $(BUILD_DIR)/os.bin: pre-build bootloader kernel
-	@echo BUILDING THE IMAGE
+	@echo ------------ BUILDING IMAGE ------------
 	@dd if=/dev/zero of=$@ bs=512 count=4096 status=none
 	@mkfs.fat -I -F 32 -n boot $@ 2>/dev/null 1>/dev/null
 	@dd if=$(BUILD_DIR)/kernel.bin of=$@ conv=notrunc seek=1 status=none
@@ -50,7 +52,6 @@ $(BUILD_DIR)/kernel.bin: src/kernel/kernel.c
 	@$(MAKE) -s -C src/kernel
 
 
-
 # --------------------------------------------------
 # --------------------- UTILS ----------------------
 # --------------------------------------------------
@@ -58,5 +59,7 @@ $(BUILD_DIR)/kernel.bin: src/kernel/kernel.c
 pre-build: 
 	@mkdir -p $(BUILD_DIR)
 
-clean: 
-	rm -rf $(BUILD_DIR)/*
+clean:
+	@$(MAKE) -s -C src/kernel clean
+	@rm  -rf $(BUILD_DIR)/*
+	@echo ---------- CLEANED MAIN BUILD ----------
