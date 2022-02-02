@@ -9,7 +9,9 @@
 #ifndef __PRINT_H__
 #define __PRINT_H__
 
+#include <stdint.h>
+
 //PROTOTYPES
-void print(char *text);
+void print(uint8_t *text);
 
 #endif // PRINT_H

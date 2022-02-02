@@ -1,8 +1,10 @@
 #include "print.h"
+#include <stdint.h>
 
 extern int main()
 {
-	char *text = "Welcome to the cOS Kernel !\n\n\n\n";
+	uint8_t *text = "Welcome to the cOS Kernel !";
 	print(text);
+
 	return 0;
 }

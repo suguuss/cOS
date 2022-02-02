@@ -5,14 +5,13 @@
  *
  * @param text   - The string to print
  */
-void print(char *text)
+void print(uint8_t *text)
 {
-	volatile char *buff = (volatile char *)0xb8000;
-	int i = 0;
+	volatile uint8_t *buff = (volatile uint8_t *)0xb8000;
 
-	while (text[i] != 0)
+	while (*text != 0)
 	{
-		*buff++ = text[i++];
+		*buff++ = *text++;
 		*buff++ = 0x02;
 	}
 	return;
