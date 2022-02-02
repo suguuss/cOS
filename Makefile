@@ -14,9 +14,9 @@ export BUILD_DIR 		= $(CURRENT_DIR)/build
 
 .PHONY: all run os bootloader kernel pre-build clean
 
-all: os
+all: clean os
 
-run: os
+run: clean os
 	qemu-system-x86_64 -drive format=raw,file=$(BUILD_DIR)/os.bin,index=0
 
 # ---------------------------------------------------

@@ -55,6 +55,17 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
     │   ├── bootsector.asm
     │   └── Makefile
     └── kernel
+        ├── drivers
+        │   ├── disk
+        │   │   └── ata
+        │   │       ├── ata.c
+        │   │       └── ata.h
+        │   ├── ports
+        │   │   ├── ports.c
+        │   │   └── ports.h
+        │   └── print
+        │       ├── print.c
+        │       └── print.h
         ├── kernel.c
         ├── kernel_entry.asm
         └── Makefile
