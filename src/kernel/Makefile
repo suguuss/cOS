@@ -1,3 +1,6 @@
+
+# KERNEL MAKEFILE
+
 $(BUILD_DIR)/kernel.bin: kernel.c kernel_entry.asm
 	@echo COMPILING KERNEL
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $(BUILD_DIR)/kernel.o

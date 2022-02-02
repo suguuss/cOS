@@ -16,7 +16,7 @@ export BUILD_DIR 		= $(CURRENT_DIR)/build
 all: os
 
 run: os
-	qemu-system-x86_64 $(BUILD_DIR)/os.bin
+	qemu-system-x86_64 -drive format=raw,file=$(BUILD_DIR)/os.bin,index=0
 
 
 # --------------------------------------------------
@@ -28,7 +28,7 @@ $(BUILD_DIR)/os.bin: pre-build bootloader kernel
 	@echo BUILDING THE IMAGE
 	@dd if=/dev/zero of=$@ bs=512 count=4096 status=none
 	@mkfs.fat -I -F 32 -n boot $@ 2>/dev/null 1>/dev/null
-	@dd if=$(BUILD_DIR)/kernel.bin of=$@ conv=notrunc seek=2 status=none
+	@dd if=$(BUILD_DIR)/kernel.bin of=$@ conv=notrunc seek=1 status=none
 	@dd if=$(BUILD_DIR)/bootloader.bin of=$@ conv=notrunc status=none
 
 

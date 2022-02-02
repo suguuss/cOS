@@ -101,7 +101,7 @@ start_protected_mode:
 	mov fs, ax
 	mov gs, ax
 	
-	mov ebp, 0x90000		; 32 bit stack base pointer
+	mov ebp, 0x7B00		; 32 bit stack base pointer
 	mov esp, ebp
 
 	jmp KERNEL_ADDR

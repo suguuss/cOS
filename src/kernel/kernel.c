@@ -2,7 +2,7 @@ void print(char *text);
 
 extern int main()
 {
-	char text[] = "0123456";
+	char *text = "Welcome to the cOS Kernel !";
 	print(text);
 	return 0;
 }
