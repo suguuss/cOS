@@ -4,15 +4,9 @@
 
 extern int main()
 {
-	uint8_t *text = "Welcome to the cOS Kernel !";
-	uint8_t buffer[512];
+	uint8_t *text = "DEBUTAAAAABBBBBCCCCCDDDDDEEEEEFFFFFGGGGGHHHHHIIIIIJJJJJKKKKKLLLLLMMMMMNNNNNFINFIN";
 
-
-	ata_write_sector(98, 1, text);
-	ata_read_sector(98, 1, buffer);
-
-
-	print(buffer);
+	print(text);
 
 	return 0;
 }
