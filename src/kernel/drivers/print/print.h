@@ -23,8 +23,8 @@
 #define REG_SCREEN_DATA 0x3D5
 
 // PROTOTYPES
-void cprint(uint8_t* text, font_color_t fg_color, font_color_t bg_color);
-void print(uint8_t* text);
+void cprint(char* text, font_color_t fg_color, font_color_t bg_color);
+void print(char* text);
 
 int	 get_cursor();
 void set_cursor(int pos);

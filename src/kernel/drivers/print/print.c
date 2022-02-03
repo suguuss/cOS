@@ -16,9 +16,9 @@
  * @param fg_color - Foreground color
  * @param bg_color - Background color
  */
-void cprint(uint8_t* text, font_color_t fg_color, font_color_t bg_color)
+void cprint(char* text, font_color_t fg_color, font_color_t bg_color)
 {
-	volatile uint8_t* buff = (volatile uint8_t*)VIDEO_ADDR;
+	volatile char* buff = (volatile char*)VIDEO_ADDR;
 
 	int cursor_pos = get_cursor(); // Cursor position
 	while (*text != 0)
@@ -35,7 +35,7 @@ void cprint(uint8_t* text, font_color_t fg_color, font_color_t bg_color)
  *
  * @param text   - The string to print
  */
-void print(uint8_t* text) { cprint(text, F_WHITE, F_BLACK); }
+void print(char* text) { cprint(text, F_WHITE, F_BLACK); }
 
 /**
  * @brief Get the cursor position
