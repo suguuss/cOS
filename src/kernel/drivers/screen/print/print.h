@@ -18,9 +18,6 @@
 #define MAX_ROWS   25
 #define MAX_COLS   80
 
-// CONTROL REGISTER VGA
-#define REG_SCREEN_CTRL 0x3D4
-#define REG_SCREEN_DATA 0x3D5
 
 // ----------------------------------------------
 // ------------------- PRINT --------------------
@@ -30,7 +27,5 @@
 void cprint(char* text, font_color_t fg_color, font_color_t bg_color);
 void print(char* text);
 
-int	 get_cursor();
-void set_cursor(int pos);
 
 #endif // PRINT_H

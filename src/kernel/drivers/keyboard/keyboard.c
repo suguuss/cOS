@@ -6,23 +6,22 @@
  */
 
 #include "keyboard.h"
-#include "../print/print.h"		// TO REMOVE - DEBUG ONLY 
+
+//#include "../screen/print/print.h" // TO REMOVE - DEBUG ONLY
 
 // --------- PRIVATE DEFINES ---------
 // REGISTERS
-#define DATA_PORT 			0x60
-#define STATUS_REGISTER 	0x64	// READ
-#define COMMAND_REGISTER 	0x64	// WRITE
+#define DATA_PORT		 0x60
+#define STATUS_REGISTER	 0x64 // READ
+#define COMMAND_REGISTER 0x64 // WRITE
 
 // BITS
-#define BUFFER_STATUS_OUT	0x01
-#define BUFFER_STATUS_IN	0x02
+#define BUFFER_STATUS_OUT 0x01
+#define BUFFER_STATUS_IN  0x02
 
 // -------- PRIVATE PROTOTYPE --------
 static void wait_for_output();
 static void wait_for_input();
-
-
 
 
 /**
@@ -31,7 +30,10 @@ static void wait_for_input();
  */
 static void wait_for_output()
 {
-	while (port_byte_in(STATUS_REGISTER) & BUFFER_STATUS_OUT){print("c");}
+	while (port_byte_in(STATUS_REGISTER) & BUFFER_STATUS_OUT)
+	{
+		// print("c");
+	}
 }
 
 /**
@@ -39,5 +41,6 @@ static void wait_for_output()
  */
 static void wait_for_input()
 {
-	while (port_byte_in(STATUS_REGISTER) & BUFFER_STATUS_IN);
+	while (port_byte_in(STATUS_REGISTER) & BUFFER_STATUS_IN)
+		;
 }

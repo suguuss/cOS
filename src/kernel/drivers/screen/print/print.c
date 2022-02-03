@@ -7,7 +7,8 @@
 
 #include "print.h"
 
-#include "../ports/ports.h"
+#include "../../ports/ports.h"
+#include "../cursor/cursor.h"
 
 /**
  * @brief Prints a string with a given color
@@ -45,38 +46,3 @@ void cprint(char* text, font_color_t fg_color, font_color_t bg_color)
  * @param text   - The string to print
  */
 void print(char* text) { cprint(text, F_WHITE, F_BLACK); }
-
-/**
- * @brief Get the cursor position
- *
- * @return int - The cursor position
- */
-int get_cursor()
-{
-	// GET MSByte
-	port_byte_out(REG_SCREEN_CTRL, 14);			  // SET THE REGISTER YOU WANNA READ
-	int pos = port_byte_in(REG_SCREEN_DATA) << 8; // READ THE REGISTER
-
-	// GET LSByte
-	port_byte_out(REG_SCREEN_CTRL, 15);	  // SET THE REGISTER YOU WANNA READ
-	pos += port_byte_in(REG_SCREEN_DATA); // READ THE REGISTER
-
-	return pos;
-}
-
-/**
- * @brief Set the cursor position
- *
- * @param pos - The position to set the cursor to
- */
-void set_cursor(int pos)
-{
-	// SET MSByte
-	port_byte_out(REG_SCREEN_CTRL, 14);		  // SET THE REGISTER YOU WANNA READ
-	port_byte_out(REG_SCREEN_DATA, pos >> 8); // SET THE REGISTER YOU WANNA READ
-
-	// SET LSByte
-	port_byte_out(REG_SCREEN_CTRL, 15); // SET THE REGISTER YOU WANNA READ
-	port_byte_out(REG_SCREEN_DATA,
-				  pos & 0xFF); // SET THE REGISTER YOU WANNA READ
-}

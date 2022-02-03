@@ -5,11 +5,12 @@ K_BUILD_DIR = build
 .PHONY: pre-build clean 
 
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel_entry.o # NEEDS TO BE FIRST
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
-OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
 
 # --------------------------------------------------
 # --------------- LINKING OBJECTS ------------------
@@ -30,7 +31,7 @@ $(K_BUILD_DIR)/kernel.o: kernel.c
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 # ------------ PRINT -------------
-$(K_BUILD_DIR)/print.o: drivers/print/print.c drivers/print/print.h
+$(K_BUILD_DIR)/print.o: drivers/screen/print/print.c drivers/screen/print/print.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 # ------------ PORTS -------------
@@ -45,6 +46,9 @@ $(K_BUILD_DIR)/ata.o: drivers/disk/ata/ata.c drivers/disk/ata/ata.h
 $(K_BUILD_DIR)/keyboard.o: drivers/keyboard/keyboard.c drivers/keyboard/keyboard.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
+# ------------- CURSOR --------------
+$(K_BUILD_DIR)/cursor.o: drivers/screen/cursor/cursor.c drivers/screen/cursor/cursor.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 pre-build:
 	@mkdir -p $(K_BUILD_DIR)
