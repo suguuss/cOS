@@ -17,11 +17,10 @@ void print(uint8_t *text)
 {
 	volatile uint8_t *buff = (volatile uint8_t *)VIDEO_ADDR;
 
-	int current_pos;			   // Position in the text buffer
 	int cursor_pos = get_cursor(); // Cursor position
-	while (text[current_pos] != 0)
+	while (*text != 0)
 	{
-		buff[cursor_pos] = text[current_pos++];
+		buff[cursor_pos] = *text++;
 		buff[cursor_pos + 1] = RED_ON_WHITE;
 		cursor_pos += 2;
 	}
