@@ -3,14 +3,15 @@
 #include "drivers/print/print.h"
 
 #include <stdint.h>
-
 extern int main()
 {
-	char* msg1 = "Oh GRAHAM, receive my soul!";
-	char* msg2 = "Thanks GRAHAM, You're the best!";
+	char* msg1 = "GRAHAM THE BG\n\n";
+	char* msg2 = "Thanks GRAHAM,\n\n\n\n\n You're the best!";
 
+	volatile uint16_t* buff = (volatile uint16_t*)VIDEO_ADDR;
+
+	// set_cursor(300);
 	print(msg1);
-	cprint(msg2, F_RED, F_BLACK);
 
 	return 0;
 }

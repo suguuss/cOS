@@ -14,7 +14,7 @@
 
 
 // DEFINES
-#define VIDEO_ADDR 0xB8000
+#define VIDEO_ADDR 0xB8000 // https://wiki.osdev.org/Memory_Map_(x86)
 #define MAX_ROWS   25
 #define MAX_COLS   80
 
@@ -22,7 +22,11 @@
 #define REG_SCREEN_CTRL 0x3D4
 #define REG_SCREEN_DATA 0x3D5
 
-// PROTOTYPES
+// ----------------------------------------------
+// ------------------- PRINT --------------------
+// ----------------------------------------------
+#define GET_COLORED_CHAR(CHAR, COLOR) ((CHAR) | ((COLOR) << 8))
+
 void cprint(char* text, font_color_t fg_color, font_color_t bg_color);
 void print(char* text);
 

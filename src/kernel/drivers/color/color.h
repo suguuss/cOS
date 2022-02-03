@@ -14,7 +14,7 @@
 // ----------------------------------------------
 // ---------------- FONT COLORS -----------------
 // ----------------------------------------------
-#define CREATE_FONT_COLOR(FG, BG) ((FG) | ((BG) << 4))
+#define GET_FONT_COLOR(FG, BG) ((FG) | ((BG) << 4))
 
 // FONT - BACKGROUND OR FOREGROUND
 typedef enum
