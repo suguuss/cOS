@@ -9,6 +9,7 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
 
 # --------------------------------------------------
 # --------------- LINKING OBJECTS ------------------
@@ -38,6 +39,10 @@ $(K_BUILD_DIR)/ports.o: drivers/ports/ports.c drivers/ports/ports.h
 
 # ------------- ATA --------------
 $(K_BUILD_DIR)/ata.o: drivers/disk/ata/ata.c drivers/disk/ata/ata.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+
+# ----------- KEYBOARD -----------
+$(K_BUILD_DIR)/keyboard.o: drivers/keyboard/keyboard.c drivers/keyboard/keyboard.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 
