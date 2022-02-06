@@ -8,7 +8,9 @@
 #include "print.h"
 
 #include "../../ports/ports.h"
+#include "../color/color.h"
 #include "../cursor/cursor.h"
+
 
 /**
  * @brief Prints a string with a given color
@@ -17,7 +19,7 @@
  * @param fg_color - Foreground color
  * @param bg_color - Background color
  */
-void cprint(char* text, font_color_t fg_color, font_color_t bg_color)
+void k_cprint(char* text, fb_color_t fg_color, fb_color_t bg_color)
 {
 	volatile uint16_t* buff = (volatile uint16_t*)VIDEO_ADDR;
 
@@ -32,8 +34,8 @@ void cprint(char* text, font_color_t fg_color, font_color_t bg_color)
 		}
 		else
 		{
+			// Create a char with a given color and pass it to the 16 bits buffer
 			buff[cursor_pos] = GET_COLORED_CHAR(*text++, GET_FONT_COLOR(fg_color, bg_color));
-			// buff[cursor_pos] = *text++ | GET_FONT_COLOR(fg_color, bg_color);
 			cursor_pos++;
 		}
 	}
@@ -45,4 +47,20 @@ void cprint(char* text, font_color_t fg_color, font_color_t bg_color)
  *
  * @param text   - The string to print
  */
-void print(char* text) { cprint(text, F_WHITE, F_BLACK); }
+void k_print(char* text)
+{
+	k_cprint(text, get_foreground_color(), get_background_color());
+}
+
+/**
+ * @brief Print a string at a given position
+ *
+ * @param text
+ * @param x
+ * @param y
+ */
+void k_print_at(char* text, uint16_t x, uint16_t y)
+{
+	set_cursor(x + (y * MAX_COLS));
+	k_print(text);
+}
