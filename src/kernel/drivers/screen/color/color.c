@@ -13,9 +13,12 @@
 // ! GLOBAL SETTABLE FONT COLOR
 font_color_t g_font_color = GET_FONT_COLOR(FB_RED, FB_BLACK);
 
-// ----------------------------------------------
-// ---------------- FONT COLORS -----------------
-// ----------------------------------------------
+// ! ----------------------------------------------
+// ! ---------------- FONT COLORS -----------------
+// ! ----------------------------------------------
+
+
+// ! ---------------- FULL FONT  -----------------
 
 /**
  * @brief Set the global font color
@@ -39,6 +42,7 @@ uint8_t get_font_color()
 	return g_font_color;
 }
 
+// ! ---------------- BACK FONT  -----------------
 /**
  * @brief Get the Background component of the global font color
  *
@@ -51,6 +55,19 @@ uint8_t get_background_color()
 }
 
 /**
+ * @brief Set the Background component of the global font color
+ *
+ * @param fg_color
+ * @param bg_color
+ */
+void set_background_color(fb_color_t bg_color)
+{
+	g_font_color = (g_font_color & 0x0F) | (bg_color << 4);
+}
+
+// ! ---------------- FORE FONT  -----------------
+
+/**
  * @brief Get the Foreground component of the global font color
  *
  * @param fg_color
@@ -61,16 +78,6 @@ uint8_t get_foreground_color()
 	return g_font_color & 0x0F;
 }
 
-/**
- * @brief Set the Background component of the global font color
- *
- * @param fg_color
- * @param bg_color
- */
-void set_background_color(fb_color_t bg_color)
-{
-	g_font_color = (g_font_color & 0x0F) | (bg_color << 4);
-}
 
 /**
  * @brief Set the Foreground component of the global font color
