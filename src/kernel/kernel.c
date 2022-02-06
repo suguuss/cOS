@@ -11,9 +11,9 @@ extern int main()
 	volatile uint16_t* buff = (volatile uint16_t*)VIDEO_ADDR;
 
 	// set_cursor(300);
-	print(msg1);
+	k_print(msg1);
 	// print(msg2);
-	cprint(msg2, F_LIGHT_MAGENTA, F_BLACK);
+	k_cprint(msg2, FB_LIGHT_MAGENTA, FB_BLACK);
 
 	return 0;
 }
