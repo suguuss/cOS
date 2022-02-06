@@ -8,6 +8,7 @@
 #include "print.h"
 
 #include "../../ports/ports.h"
+#include "../color/color.h"
 #include "../cursor/cursor.h"
 
 
@@ -48,7 +49,18 @@ void k_cprint(char* text, fb_color_t fg_color, fb_color_t bg_color)
  */
 void k_print(char* text)
 {
-	k_cprint(text, FB_WHITE, FB_BLACK);
+	k_cprint(text, get_foreground_color(), get_background_color());
 }
 
-void k_print_at(char* text, uint16_t x, uint16_t y);
+/**
+ * @brief Print a string at a given position
+ *
+ * @param text
+ * @param x
+ * @param y
+ */
+void k_print_at(char* text, uint16_t x, uint16_t y)
+{
+	set_cursor(x + (y * MAX_COLS));
+	k_print(text);
+}

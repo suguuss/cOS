@@ -34,7 +34,7 @@ void set_font_color(fb_color_t fg_color, fb_color_t bg_color)
  * @param fg_color
  * @param bg_color
  */
-void set_font_color()
+uint8_t get_font_color()
 {
 	return g_font_color;
 }
@@ -45,9 +45,9 @@ void set_font_color()
  * @param fg_color
  * @param bg_color
  */
-void get_foreground_color()
+uint8_t get_background_color()
 {
-	return g_font_color >> 8;
+	return g_font_color >> 4;
 }
 
 /**
@@ -56,7 +56,7 @@ void get_foreground_color()
  * @param fg_color
  * @param bg_color
  */
-void get_foreground_color()
+uint8_t get_foreground_color()
 {
-	return g_font_color & 0xFF;
+	return g_font_color & 0x0F;
 }

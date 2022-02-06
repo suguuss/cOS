@@ -43,8 +43,9 @@ typedef enum
 typedef uint16_t font_color_t;
 
 // PROTOTYPES
-void set_font_color(fb_color_t fg_color, fb_color_t bg_color);
-void get_foreground_color();
-void get_background_color();
+void	set_font_color(fb_color_t fg_color, fb_color_t bg_color);
+uint8_t get_font_color();
+uint8_t get_foreground_color();
+uint8_t get_background_color();
 
 #endif

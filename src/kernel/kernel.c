@@ -15,5 +15,7 @@ extern int main()
 	// print(msg2);
 	k_cprint(msg2, FB_LIGHT_MAGENTA, FB_BLACK);
 
+	k_print_at(msg2, 1, 1);
+
 	return 0;
 }

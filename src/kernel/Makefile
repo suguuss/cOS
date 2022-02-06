@@ -10,6 +10,7 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/color.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
 
 # --------------------------------------------------
@@ -48,6 +49,10 @@ $(K_BUILD_DIR)/keyboard.o: drivers/keyboard/keyboard.c drivers/keyboard/keyboard
 
 # ------------- CURSOR --------------
 $(K_BUILD_DIR)/cursor.o: drivers/screen/cursor/cursor.c drivers/screen/cursor/cursor.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+
+# ------------- COLOR --------------
+$(K_BUILD_DIR)/color.o: drivers/screen/color/color.c drivers/screen/color/color.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 pre-build:
