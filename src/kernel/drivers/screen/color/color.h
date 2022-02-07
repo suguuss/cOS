@@ -56,6 +56,6 @@ void	set_foreground_color(fb_color_t fg_color);
 
 // BACKGROUND
 fb_color_t get_background_color();
-void	set_background_color(fb_color_t fg_color);
+void	set_background_color(fb_color_t bg_color);
 
 #endif

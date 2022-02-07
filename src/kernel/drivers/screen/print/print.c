@@ -64,3 +64,24 @@ void k_print_at(char* text, uint16_t x, uint16_t y)
 	set_cursor(x + (y * MAX_COLS));
 	k_print(text);
 }
+
+/**
+ * @brief Clears the screen and sets a background color
+ *
+ * @param color
+ */
+void k_cclear(fb_color_t bg_color)
+{
+	fb_color_t fore = get_foreground_color();
+	fb_color_t back = get_background_color();
+	set_font_color(bg_color, bg_color);
+
+	set_cursor(0);
+	for (uint16_t i = 0; i < MAX_ROWS * MAX_COLS; i++)
+	{
+		k_print(" ");
+	}
+	set_cursor(0);
+
+	set_font_color(fore, back);
+}
