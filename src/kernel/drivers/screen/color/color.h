@@ -48,14 +48,14 @@ typedef uint16_t font_color_t;
 
 // FULL FONT
 void	set_font_color(fb_color_t fg_color, fb_color_t bg_color);
-uint8_t get_font_color();
+font_color_t get_font_color();
 
 // FOREGROUND
-uint8_t get_foreground_color();
+fb_color_t get_foreground_color();
 void	set_foreground_color(fb_color_t fg_color);
 
 // BACKGROUND
-uint8_t get_background_color();
+fb_color_t get_background_color();
 void	set_background_color(fb_color_t fg_color);
 
 #endif
