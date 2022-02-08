@@ -36,12 +36,16 @@
 
 */
 
-
-
 #include "interrupts.h"
 #include "../stdlibs/string.h"
+#include "../drivers/screen/print/print.h"
 
 static void idt_set_entry(idt_entry_t *entry, uint32_t base, uint16_t sel, uint8_t flags);
+
+void isr_test()
+{
+	k_cclear(FB_RED);
+}
 
 void init_idt()
 {
@@ -54,11 +58,44 @@ void init_idt()
 
 	// Set all the idt entries to 0 to void junk. Because an entry 
 	// can be set to 0 if we dont use it.
-	memset(idt_entries, 0, 64 * 256);
+	// memset(idt_entries, 0, 64 * 256);
 
-	idt_set_entry(&idt_entries[0], 0, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[0] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[1] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[2] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[3] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[4] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[5] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[6] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[7] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[8] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[9] , (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[10], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[11], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[12], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[13], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[14], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[15], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[16], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[17], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[18], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[19], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[20], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[21], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[22], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[23], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[24], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[25], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[26], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[27], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[28], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[29], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[30], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[31], (uint32_t)isr_test, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[255], (uint32_t)0, 0x08, 0x8E);
+
+	__asm__("lidt %0" ::"m"(idt_ptr));
 }
-
 
 /**
  * @brief Set an entry with values given as input.
