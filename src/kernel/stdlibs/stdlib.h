@@ -13,6 +13,6 @@
 
 // PROTOTYPES
 void uitoa(uint16_t number, char* out_str);
-
+void itoa(int16_t number, char* out_str);
 
 #endif //_STDLIB_H_

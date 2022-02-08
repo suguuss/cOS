@@ -19,8 +19,8 @@ extern int main()
 
 	char str_num[15];
 
-	uitoa(15647, str_num);
-
+	// uitoa(15647, str_num);
+	itoa(-156, str_num);
 	k_print(str_num);
 
 	return 0;
