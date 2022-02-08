@@ -7,6 +7,7 @@ K_BUILD_DIR = build
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel_entry.o # NEEDS TO BE FIRST
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/interrupts.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/string.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
@@ -60,6 +61,9 @@ $(K_BUILD_DIR)/color.o: drivers/screen/color/color.c drivers/screen/color/color.
 $(K_BUILD_DIR)/interrupts.o: interrupts/interrupts.c interrupts/interrupts.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
+# ----------- STRINGS ------------
+$(K_BUILD_DIR)/string.o: stdlibs/string.c stdlibs/string.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 
 
