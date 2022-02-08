@@ -29,5 +29,6 @@ typedef struct idt_ptr
 	uint32_t base; 		// The address of the first element in our idt_entry_t array.
 } __attribute__((packed)) idt_ptr_t;
 
+void init_idt();
 
 #endif

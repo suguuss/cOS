@@ -60,13 +60,29 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
         │   │   └── ata
         │   │       ├── ata.c
         │   │       └── ata.h
+        │   ├── keyboard
+        │   │   ├── keyboard.c
+        │   │   └── keyboard.h
         │   ├── ports
         │   │   ├── ports.c
         │   │   └── ports.h
-        │   └── print
-        │       ├── print.c
-        │       └── print.h
+        │   └── screen
+        │       ├── color
+        │       │   ├── color.c
+        │       │   └── color.h
+        │       ├── cursor
+        │       │   ├── cursor.c
+        │       │   └── cursor.h
+        │       └── print
+        │           ├── print.c
+        │           └── print.h
+        ├── interrupts
+        │   ├── interrupts.c
+        │   └── interrupts.h
         ├── kernel.c
         ├── kernel_entry.asm
-        └── Makefile
+        ├── Makefile
+        └── stdlibs
+            ├── string.c
+            └── string.h
 ```
