@@ -13,6 +13,7 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/color.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/stdlib.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
 
 # --------------------------------------------------
@@ -63,6 +64,10 @@ $(K_BUILD_DIR)/interrupts.o: interrupts/interrupts.c interrupts/interrupts.h
 
 # ----------- STRINGS ------------
 $(K_BUILD_DIR)/string.o: stdlibs/string.c stdlibs/string.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+
+# ------------ STDLIB ------------
+$(K_BUILD_DIR)/stdlib.o: stdlibs/stdlib.c stdlibs/stdlib.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 
