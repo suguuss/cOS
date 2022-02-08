@@ -10,6 +10,6 @@
 
 #include <stdint.h>
 
-void memset(void *addr, uint8_t v, uint32_t n);
-
+void memset(void* addr, uint8_t v, uint32_t n);
+int	 strlen(const char* str);
 #endif

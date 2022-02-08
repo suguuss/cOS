@@ -14,10 +14,26 @@
  * @param v value to copy
  * @param n number of bytes to copy
  */
-void memset(void *addr, uint8_t v, uint32_t n)
+void memset(void* addr, uint8_t v, uint32_t n)
 {
 	while (n--)
 	{
-		*((uint8_t *)addr++) = v;
+		*((uint8_t*)addr++) = v;
 	}
+}
+
+/**
+ * @brief Get the lenght of a given string
+ *
+ * @param str
+ * @return int
+ */
+int strlen(const char* str)
+{
+	int i = 0;
+	while (str[i] != '\0')
+	{
+		i++;
+	}
+	return i;
 }
