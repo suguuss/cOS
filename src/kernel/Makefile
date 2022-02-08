@@ -5,6 +5,7 @@ K_BUILD_DIR = build
 .PHONY: pre-build clean 
 
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel_entry.o # NEEDS TO BE FIRST
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/interrupts.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
@@ -47,13 +48,21 @@ $(K_BUILD_DIR)/ata.o: drivers/disk/ata/ata.c drivers/disk/ata/ata.h
 $(K_BUILD_DIR)/keyboard.o: drivers/keyboard/keyboard.c drivers/keyboard/keyboard.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
-# ------------- CURSOR --------------
+# ------------ CURSOR ------------
 $(K_BUILD_DIR)/cursor.o: drivers/screen/cursor/cursor.c drivers/screen/cursor/cursor.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
-# ------------- COLOR --------------
+# ------------ COLOR -------------
 $(K_BUILD_DIR)/color.o: drivers/screen/color/color.c drivers/screen/color/color.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+
+# ---------- INTERRUPTS ----------
+$(K_BUILD_DIR)/interrupts.o: interrupts/interrupts.c interrupts/interrupts.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+
+
+
+
 
 pre-build:
 	@mkdir -p $(K_BUILD_DIR)
