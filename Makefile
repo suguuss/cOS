@@ -17,7 +17,7 @@ export BUILD_DIR 		= $(CURRENT_DIR)/build
 all: clean os
 
 run: clean os
-	qemu-system-x86_64 -drive format=raw,file=$(BUILD_DIR)/os.bin,index=0
+	qemu-system-x86_64 -d int -drive format=raw,file=$(BUILD_DIR)/os.bin,index=0 2>qemu.log
 
 # ---------------------------------------------------
 # ----------------- CREATING DISK -------------------

@@ -8,20 +8,12 @@
 #include <stdint.h>
 extern int main()
 {
+	// // idt setup
 	// init_idt();
-	// char* msg1 = "This is a test string, fuck graham";
-
-	// memset(msg1, 'F', 4); // Testing the memset
-
-	// k_print(msg1);
-
-	// asm volatile("int $0x3");
-
-	char str_num[15];
-
-	// uitoa(15647, str_num);
-	itoa(-156, str_num);
-	k_print(str_num);
+	// // keyboard init
+	// port_byte_out(0x21, 0xFD);
+	// // Enable interrupts
+	// asm volatile("sti");
 
 	return 0;
 }

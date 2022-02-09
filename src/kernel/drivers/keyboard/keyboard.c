@@ -8,7 +8,7 @@
 #include "keyboard.h"
 
 #include "../screen/print/print.h" // TO REMOVE - DEBUG ONLY
-
+#include "../../stdlibs/stdlib.h"
 // --------- PRIVATE DEFINES ---------
 // REGISTERS
 #define DATA_PORT		 0x60
@@ -21,9 +21,14 @@
 
 void keyboard_callback()
 {
+	char code[10];
+
+	uint8_t scancode = port_byte_in(DATA_PORT);
+	uitoa(scancode, code);
+	k_print(code);
+
 	// End Of Interrupt (EOI)
 	port_byte_out(0x20, 0x20);
 
-	uint8_t scancode = port_byte_in(0x60);
-	k_print(scancode);
+	__asm__("iret");
 }
