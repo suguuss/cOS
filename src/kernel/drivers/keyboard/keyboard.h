@@ -10,6 +10,6 @@
 
 #include "../ports/ports.h"
 
-uint8_t test_controller();
+void keyboard_callback();
 
 #endif

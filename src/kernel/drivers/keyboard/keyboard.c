@@ -7,7 +7,7 @@
 
 #include "keyboard.h"
 
-//#include "../screen/print/print.h" // TO REMOVE - DEBUG ONLY
+#include "../screen/print/print.h" // TO REMOVE - DEBUG ONLY
 
 // --------- PRIVATE DEFINES ---------
 // REGISTERS
@@ -19,28 +19,11 @@
 #define BUFFER_STATUS_OUT 0x01
 #define BUFFER_STATUS_IN  0x02
 
-// -------- PRIVATE PROTOTYPE --------
-static void wait_for_output();
-static void wait_for_input();
-
-
-/**
- * @brief Waits before reading an output from the
- * keyboard controler
- */
-static void wait_for_output()
+void keyboard_callback()
 {
-	while (port_byte_in(STATUS_REGISTER) & BUFFER_STATUS_OUT)
-	{
-		// print("c");
-	}
-}
+	// End Of Interrupt (EOI)
+	port_byte_out(0x20, 0x20);
 
-/**
- * @brief Waits before writing to the keyboard controler
- */
-static void wait_for_input()
-{
-	while (port_byte_in(STATUS_REGISTER) & BUFFER_STATUS_IN)
-		;
+	uint8_t scancode = port_byte_in(0x60);
+	k_print(scancode);
 }

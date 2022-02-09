@@ -11,6 +11,26 @@
 
 #include <stdint.h>
 
+// ------------ DEFINE -----------
+#define IRQ0  32
+#define IRQ1  33
+#define IRQ2  34
+#define IRQ3  35
+#define IRQ4  36
+#define IRQ5  37
+#define IRQ6  38
+#define IRQ7  39
+#define IRQ8  40
+#define IRQ9  41
+#define IRQ10 42
+#define IRQ11 43
+#define IRQ12 44
+#define IRQ13 45
+#define IRQ14 46
+#define IRQ15 47
+
+
+// ------------ STRUCT -----------
 // SIZEOF is 64 bytes
 typedef struct idt_entry
 {
@@ -29,6 +49,13 @@ typedef struct idt_ptr
 	uint32_t base; 		// The address of the first element in our idt_entry_t array.
 } __attribute__((packed)) idt_ptr_t;
 
+
+
+// ----------- INT FUNC ----------
 void init_idt();
+
+
+// ------- CALLBACK FUNC ---------
+extern void keyboard_callback();
 
 #endif
