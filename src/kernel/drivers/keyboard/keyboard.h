@@ -10,6 +10,6 @@
 
 #include "../ports/ports.h"
 
-__attribute__((interrupt)) void keyboard_callback(void *a);
+void keyboard_callback(void *a);
 
 #endif
