@@ -4,8 +4,7 @@
 #include <stdint.h>
 
 // src http://kbdlayout.info/KBDSF/scancodes+virtualkeys
-uint8_t keyboard_map[128] =
-{
+uint8_t keyboard_map[128] = {
 	' ',  // 00
 	' ',  // 01 - ESC
 	'1',  // 02

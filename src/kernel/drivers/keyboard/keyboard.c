@@ -7,32 +7,30 @@
 
 #include "keyboard.h"
 
-#include "../screen/print/print.h" // TO REMOVE - DEBUG ONLY
 #include "../../stdlibs/stdlib.h"
+#include "../screen/print/print.h" // TO REMOVE - DEBUG ONLY
 #include "ch-fr_keymap.h"
 // --------- PRIVATE DEFINES ---------
 // REGISTERS
-#define DATA_PORT		 0x60
-#define STATUS_REGISTER	 0x64 // READ
-#define COMMAND_REGISTER 0x64 // WRITE
-
-// BITS
-#define BUFFER_STATUS_OUT 0x01
-#define BUFFER_STATUS_IN  0x02
+#define KB_DATA_PORT		0x60
+#define KB_STATUS_REGISTER	0x64 // READ
+#define KB_COMMAND_REGISTER 0x64 // WRITE
 
 // The void* a is unused but is needed to avoid a compilation error
 __attribute__((interrupt)) void keyboard_callback(void* a)
 {
-	char code[2];
+	uint8_t scancode = port_byte_in(KB_DATA_PORT);
 
-	uint8_t scancode = port_byte_in(DATA_PORT);
-
+	// last bit (msb) is set when released and cleared when pressed
 	// Prints only when the key is pressed and not released
-	if ((scancode & 0x80) == 0)
+	if ((scancode & 0x80) == 0) // Pressed
 	{
-		code[0] = keyboard_map[scancode];
-		code[1] = 0;
-		k_print(code);
+		k_put_char(keyboard_map[scancode]);
+	}
+	else // Released
+	{
+		// k_put_char(keyboard_map[scancode & 0x7F]);
+		//  Do nothing
 	}
 
 	// End Of Interrupt (EOI)
