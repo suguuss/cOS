@@ -10,10 +10,19 @@ extern int main()
 {
 	// idt setup
 	init_idt();
-	// keyboard init
+	// Enable keyboard interupts
 	port_byte_out(0x21, 0xFD);
 	// Enable interrupts
 	asm volatile("sti");
+
+	for (int i = 0; i < MAX_ROWS; i++)
+	{
+		k_print_number(i);
+		k_put_char('\n');
+	}
+	k_print_at("0123456789ABCDEF", 0, 0);
+	k_put_char('H');
+	k_put_char_at('A', 15, 10);
 
 	return 0;
 }
