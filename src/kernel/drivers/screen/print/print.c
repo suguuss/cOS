@@ -7,10 +7,52 @@
 
 #include "print.h"
 
+#include "../../../stdlibs/stdlib.h"
 #include "../../ports/ports.h"
 #include "../color/color.h"
 #include "../cursor/cursor.h"
 
+
+/**
+ * @brief Puts a char at the current cursor position
+ *	      Increments the cursor pos by 1
+ *		  Uses the global font color
+ * @param c
+ */
+void k_put_char(char c)
+{
+	volatile uint16_t* buff = (volatile uint16_t*)VIDEO_ADDR;
+
+	int pos = get_cursor();
+
+	if (c == '\n')
+	{
+		// Set the cursor to the next line
+		pos = ((pos / (MAX_COLS) + 1) * MAX_COLS);
+		set_cursor(pos);
+		return;
+	}
+
+	// Put the character at the current cursor position
+	buff[pos] = GET_COLORED_CHAR(c, GET_FONT_COLOR(get_foreground_color(), get_background_color()));
+	set_cursor(pos + 1);
+}
+
+/**
+ * @brief Puts a char at the current cursor position
+ *	      Increments the cursor pos by 1
+ *		  Uses the global font color
+ * @param c
+ */
+void k_put_char_at(char c, uint16_t x, uint16_t y)
+{
+	volatile uint16_t* buff = (volatile uint16_t*)VIDEO_ADDR;
+
+	int pos = x + y * MAX_COLS;
+	set_cursor(pos);
+	buff[pos] = GET_COLORED_CHAR(c, GET_FONT_COLOR(get_foreground_color(), get_background_color()));
+	set_cursor(pos + 1);
+}
 
 /**
  * @brief Prints a string at cursor position
@@ -85,4 +127,11 @@ void k_cclear(fb_color_t bg_color)
 	set_cursor(0);
 
 	set_font_color(fore, back);
+}
+
+void k_print_number(int number)
+{
+	char buffer[10];
+	itoa(number, buffer);
+	k_print(buffer);
 }
