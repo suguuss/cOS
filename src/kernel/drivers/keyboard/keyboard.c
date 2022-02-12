@@ -19,7 +19,8 @@
 #define BUFFER_STATUS_OUT 0x01
 #define BUFFER_STATUS_IN  0x02
 
-void keyboard_callback()
+// The void* a is unused but is needed to avoid a compilation error
+__attribute__((interrupt)) void keyboard_callback(void* a)
 {
 	char code[10];
 
@@ -30,5 +31,4 @@ void keyboard_callback()
 	// End Of Interrupt (EOI)
 	port_byte_out(0x20, 0x20);
 
-	__asm__("iret");
 }

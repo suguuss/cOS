@@ -8,12 +8,12 @@
 #include <stdint.h>
 extern int main()
 {
-	// // idt setup
-	// init_idt();
-	// // keyboard init
-	// port_byte_out(0x21, 0xFD);
-	// // Enable interrupts
-	// asm volatile("sti");
+	// idt setup
+	init_idt();
+	// keyboard init
+	port_byte_out(0x21, 0xFD);
+	// Enable interrupts
+	asm volatile("sti");
 
 	return 0;
 }

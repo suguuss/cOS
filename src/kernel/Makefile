@@ -48,7 +48,7 @@ $(K_BUILD_DIR)/ata.o: drivers/disk/ata/ata.c drivers/disk/ata/ata.h
 
 # ----------- KEYBOARD -----------
 $(K_BUILD_DIR)/keyboard.o: drivers/keyboard/keyboard.c drivers/keyboard/keyboard.h
-	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+	$(TARGET_CC) $(TARGET_CFLGAS) -mgeneral-regs-only -c $< -o $@
 
 # ------------ CURSOR ------------
 $(K_BUILD_DIR)/cursor.o: drivers/screen/cursor/cursor.c drivers/screen/cursor/cursor.h
