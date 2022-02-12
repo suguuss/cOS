@@ -19,7 +19,6 @@ font_color_t g_font_color = GET_FONT_COLOR(FB_RED, FB_BLACK);
 
 
 // ! ---------------- FULL FONT  -----------------
-
 /**
  * @brief Set the global font color
  *
@@ -59,7 +58,6 @@ void set_background_color(fb_color_t bg_color)
 }
 
 // ! ---------------- FORE FONT  -----------------
-
 /**
  * @brief Get the Foreground component of the global font color
  */

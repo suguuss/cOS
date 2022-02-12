@@ -13,8 +13,8 @@
 
 
 /**
- * @brief Prints a string with a given color
- *
+ * @brief Prints a string at cursor position
+ *		  Increments the cursor position
  * @param text
  * @param fg_color - Foreground color
  * @param bg_color - Background color
@@ -43,7 +43,8 @@ void k_cprint(char* text, fb_color_t fg_color, fb_color_t bg_color)
 }
 
 /**
- * @brief Prints a string to the screen
+ * @brief Prints a string to the screen with global color
+ *  	  Increments the cursor position
  *
  * @param text   - The string to print
  */
