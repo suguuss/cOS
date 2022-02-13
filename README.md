@@ -1,7 +1,6 @@
 # cOS, an OS made in C
 ---
 
-- [cOS, an OS made in C](#cos--an-os-made-in-c)
   * [The Operating System](#the-operating-system)
     + [:minidisc: Bootloader](#-minidisc--bootloader)
       - [Legacy booting](#legacy-booting)
@@ -34,7 +33,6 @@
 - [Links](#links)
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
-
 
 
 ## The Operating System
