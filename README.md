@@ -35,10 +35,6 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
 ## Repository structure
 ```
 .
-├── build
-│   ├── bootloader.bin
-│   ├── kernel.bin
-│   └── os.bin
 ├── Docs
 │   ├── assets
 │   │   └── drive.png
@@ -58,19 +54,6 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
     │   ├── bootsector.asm
     │   └── Makefile
     └── kernel
-        ├── build
-        │   ├── ata.o
-        │   ├── color.o
-        │   ├── cursor.o
-        │   ├── interrupts.o
-        │   ├── kernel_entry.o
-        │   ├── kernel.o
-        │   ├── keyboard.o
-        │   ├── ports.o
-        │   ├── print.o
-        │   ├── stdlib.o
-        │   ├── string.o
-        │   └── timer.o
         ├── drivers
         │   ├── disk
         │   │   └── ata
