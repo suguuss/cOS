@@ -18,12 +18,25 @@
 // SYMBOLS
 #define BALL_SYMBOL	  '#'
 #define PADDLE_SYMBOL '|'
+#define PADDLE_SIZE	  MAX_ROWS / 4
 
 // COLORS
 #define BACK_COLOR	  FB_BLACK
 #define BALL_COLOR	  FB_RED
 #define LPADDLE_COLOR FB_BLUE
 #define RPADDLE_COLOR FB_GREEN
+
+// DEFAULT VEL AND POS
+#define DEFAULT_BALL_VEL                                                                                                                             \
+	(coord_t)                                                                                                                                        \
+	{                                                                                                                                                \
+		-1, 1                                                                                                                                        \
+	}
+#define DEFAULT_BALL_POS                                                                                                                             \
+	(coord_t)                                                                                                                                        \
+	{                                                                                                                                                \
+		MAX_COLS / 2, MAX_ROWS / 2                                                                                                                   \
+	}
 
 
 typedef struct

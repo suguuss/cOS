@@ -22,7 +22,7 @@ void pong_set_game(pong_game_t* game)
 {
 	// BALL
 	ball_t b1;
-	pong_set_ball(&b1, (coord_t){ MAX_COLS / 2, MAX_ROWS / 2 }, (coord_t){ -1, 0 });
+	pong_set_ball(&b1, DEFAULT_BALL_POS, DEFAULT_BALL_VEL);
 
 	// PADDLES
 	paddle_t p1;
@@ -62,12 +62,12 @@ void pong_set_ball(ball_t* ball, coord_t pos, coord_t vel)
  */
 void pong_set_paddles(paddle_t* p1, paddle_t* p2)
 {
-	p1->width = MAX_ROWS / 4;
+	p1->width = PADDLE_SIZE;
 	p1->pos.x = 1;										   // SHIFT IT BY ONE COL
 	p1->pos.y = (MAX_ROWS / 2) - (p1->width / 2);		   // CENTER IT
 	p1->color = GET_FONT_COLOR(LPADDLE_COLOR, BACK_COLOR); // HARD CODED FOR NOW
 
-	p2->width = MAX_ROWS / 4;
+	p2->width = PADDLE_SIZE;
 	p2->pos.x = MAX_COLS - 2;							   // SHIFT IT BY ONE COL FROM THE RIGHT
 	p2->pos.y = (MAX_ROWS / 2) - (p2->width / 2);		   // CENTER IT
 	p2->color = GET_FONT_COLOR(RPADDLE_COLOR, BACK_COLOR); // HARD CODED FOR NOW
@@ -144,8 +144,13 @@ void pong_move_ball(pong_game_t* g)
 		{
 			// Increase score of right player
 			g->score_right++;
+
+			// clear the ball
+			set_font_color_whole(g->ball.color);
+			k_put_char_at(' ', g->ball.pos.x, g->ball.pos.y);
+
 			// Reset ball
-			pong_set_ball(&g->ball, (coord_t){ MAX_COLS / 2, MAX_ROWS / 2 }, (coord_t){ 1, 1 });
+			pong_set_ball(&g->ball, DEFAULT_BALL_POS, DEFAULT_BALL_VEL);
 		}
 		// Check collision with right wall
 		else
@@ -154,11 +159,11 @@ void pong_move_ball(pong_game_t* g)
 			g->score_left++;
 
 			// clear the ball
-			set_font_color(get_foreground_color(g->ball.color), get_background_color(g->ball.color));
+			set_font_color_whole(g->ball.color);
 			k_put_char_at(' ', g->ball.pos.x, g->ball.pos.y);
 
 			// Reset ball
-			pong_set_ball(&g->ball, (coord_t){ MAX_COLS / 2, MAX_ROWS / 2 }, (coord_t){ 1, 0 });
+			pong_set_ball(&g->ball, DEFAULT_BALL_POS, DEFAULT_BALL_VEL);
 		}
 	}
 
@@ -226,7 +231,7 @@ void pong_run()
 			{
 				pong_paddle_move_up(&game.paddle_left);
 			}
-			else if (is_key_pressed(KEY_S))
+			if (is_key_pressed(KEY_S))
 			{
 				pong_paddle_move_down(&game.paddle_left);
 			}
