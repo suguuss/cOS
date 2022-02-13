@@ -1,7 +1,38 @@
 # cOS, an OS made in C
+---
+
+## The Operating System
+
+### :minidisc: Bootloader
+#### Legacy booting
+The bios loads the first sector in the bottable device and look for the magic number (0xAA55, chosen number to represent a bootable signature). If the number is found, the bios jumps to the first instructions in the sector.
+
+#### :floppy_disk: FAT32
+#### :dvd: Reading sectors from the 'disk'
+#### :page_with_curl: GDT - Global Desriptor Table
+
+#### :lock: Protected Mode
+
+### :desktop_computer: Kernel
+#### :electric_plug: Ports
+#### :stopwatch: Interrupts
+
+##### :scroll: IDT - Interrupt Descriptor Table
+#### :keyboard: Keyboard
+#### :hourglass: Timer / PIC - Programmable Interrupt Controller
+#### :desktop_computer: Screen
+##### Cursor
+##### Color
+##### Printing
+##### Scrolling
+
+#### :cd: Disk I/O
+##### Read / Write
 
 
-## Dependencies
+
+---
+## :rocket: Dependencies
 
 ### make
 Make is used to automate the build process. It is used to compile the kernel, and to build the bootloader.
@@ -27,11 +58,11 @@ sudo apt-get install make nasm qemu mtools
 sudo dnf install make nasm qemu mtools
 ```
 
----
 ### Building the cross compiler
 
 To build the cross compiler, you can use a script inside the `scripts` folder. The credit for the script goes to [mell-o-tron](https://github.com/mell-o-tron). If no script are available for your distro, you can refer to [this table](https://wiki.osdev.org/GCC_Cross-Compiler#Installing_Dependencies) from the osdev wiki and install the dependencies yourself.
 
+---
 ## Repository structure
 ```
 .
@@ -88,3 +119,6 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
             ├── string.c
             └── string.h
 ```
+
+# Links
+https://ecotrust-canada.github.io/markdown-toc/
