@@ -21,7 +21,7 @@ void pong_set_game(pong_game_t* game)
 {
 	// BALL
 	ball_t b1;
-	pong_set_ball(&b1, (coord_t){ MAX_COLS / 2, MAX_ROWS / 2 }, (coord_t){ 1, 1 });
+	pong_set_ball(&b1, (coord_t){ MAX_COLS / 2, MAX_ROWS / 2 }, (coord_t){ -1, 0 });
 
 	// PADDLES
 	paddle_t p1;
@@ -61,12 +61,12 @@ void pong_set_ball(ball_t* ball, coord_t pos, coord_t vel)
  */
 void pong_set_paddles(paddle_t* p1, paddle_t* p2)
 {
-	p1->width = MAX_ROWS / 2;
+	p1->width = MAX_ROWS / 4;
 	p1->pos.x = 1;								   // SHIFT IT BY ONE COL
 	p1->pos.y = (MAX_ROWS / 2) - (p1->width / 2);  // CENTER IT
 	p1->color = GET_FONT_COLOR(FB_BLUE, FB_WHITE); // HARD CODED FOR NOW
 
-	p2->width = MAX_ROWS / 2;
+	p2->width = MAX_ROWS / 4;
 	p2->pos.x = MAX_COLS - 2;						// SHIFT IT BY ONE COL FROM THE RIGHT
 	p2->pos.y = (MAX_ROWS / 2) - (p2->width / 2);	// CENTER IT
 	p2->color = GET_FONT_COLOR(FB_GREEN, FB_WHITE); // HARD CODED FOR NOW
@@ -150,14 +150,24 @@ void pong_move_ball(pong_game_t* g)
 			k_put_char_at(' ', g->ball.pos.x, g->ball.pos.y);
 
 			// Reset ball
-			pong_set_ball(&g->ball, (coord_t){ MAX_COLS / 2, MAX_ROWS / 2 }, (coord_t){ 1, 1 });
+			pong_set_ball(&g->ball, (coord_t){ MAX_COLS / 2, MAX_ROWS / 2 }, (coord_t){ 1, 0 });
 		}
 	}
 
-	// PADDLE COLLISION
-	if (g->ball.pos.x + g->ball.vel.x == g->paddle_left.pos.x + 1)
+	// LEFT PADDLE COLLISION
+	if (g->ball.pos.x + g->ball.vel.x == g->paddle_left.pos.x) // next x is in the paddle ?
 	{
+		// y is aligned with the paddle ?
 		if (g->ball.pos.y >= g->paddle_left.pos.y && g->ball.pos.y <= g->paddle_left.pos.y + g->paddle_left.width)
+		{
+			g->ball.vel.x *= -1;
+		}
+	}
+	// RIGHT PADDLE COLLISION
+	if (g->ball.pos.x + g->ball.vel.x == g->paddle_right.pos.x) // next x is in the paddle ?
+	{
+		// y is aligned with the paddle ?
+		if (g->ball.pos.y >= g->paddle_right.pos.y && g->ball.pos.y <= g->paddle_right.pos.y + g->paddle_right.width)
 		{
 			g->ball.vel.x *= -1;
 		}
