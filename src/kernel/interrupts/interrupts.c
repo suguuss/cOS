@@ -10,38 +10,39 @@
 
 	THIS FILE SETS UP THE IDT (INTERRUPT DESCRIPTOR TABLE). THE TABLE IS MADE OF 256 ENTRIES
 	EACH ONE OF THEM HAS TO BE SET TO A VALUE OR NULL. IF THERE IS NO ENTRY THE PROCESSOR
-	WILL PANIC AND RESET. THE FIRST 32 INTERRUPTS MUST BE MAPPED, THEY CORRESPOND TO : 
+	WILL PANIC AND RESET. THE FIRST 32 INTERRUPTS MUST BE MAPPED, THEY CORRESPOND TO :
 
-    0  - Division by zero exception
-    1  - Debug exception
-    2  - Non maskable interrupt
-    3  - Breakpoint exception
-    4  - 'Into detected overflow'
-    5  - Out of bounds exception
-    6  - Invalid opcode exception
-    7  - No coprocessor exception
-    8  - Double fault (pushes an error code)
-    9  - Coprocessor segment overrun
-    10 - Bad TSS (pushes an error code)
-    11 - Segment not present (pushes an error code)
-    12 - Stack fault (pushes an error code)
-    13 - General protection fault (pushes an error code)
-    14 - Page fault (pushes an error code)
-    15 - Unknown interrupt exception
-    16 - Coprocessor fault
-    17 - Alignment check exception
-    18 - Machine check exception
-    19-31 - Reserved
+	0  - Division by zero exception
+	1  - Debug exception
+	2  - Non maskable interrupt
+	3  - Breakpoint exception
+	4  - 'Into detected overflow'
+	5  - Out of bounds exception
+	6  - Invalid opcode exception
+	7  - No coprocessor exception
+	8  - Double fault (pushes an error code)
+	9  - Coprocessor segment overrun
+	10 - Bad TSS (pushes an error code)
+	11 - Segment not present (pushes an error code)
+	12 - Stack fault (pushes an error code)
+	13 - General protection fault (pushes an error code)
+	14 - Page fault (pushes an error code)
+	15 - Unknown interrupt exception
+	16 - Coprocessor fault
+	17 - Alignment check exception
+	18 - Machine check exception
+	19-31 - Reserved
 
 
 */
 
 #include "interrupts.h"
-#include "../stdlibs/string.h"
-#include "../drivers/screen/print/print.h"
-#include "../drivers/ports/ports.h"
 
-static void idt_set_entry(idt_entry_t *entry, uint32_t base, uint16_t sel, uint8_t flags);
+#include "../drivers/ports/ports.h"
+#include "../drivers/screen/print/print.h"
+#include "../stdlibs/string.h"
+
+static void idt_set_entry(idt_entry_t* entry, uint32_t base, uint16_t sel, uint8_t flags);
 
 void isr_default()
 {
@@ -51,27 +52,27 @@ void isr_default()
 void init_idt()
 {
 	idt_entry_t idt_entries[256];
-	idt_ptr_t 	idt_ptr;
+	idt_ptr_t	idt_ptr;
 
 	// SIZEOF(idt_entry_t) * 256 -1
 	idt_ptr.limit = 64 * 256 - 1;
 	idt_ptr.base  = (uint32_t)idt_entries;
 
-	// Set all the idt entries to 0 to void junk. Because an entry 
+	// Set all the idt entries to 0 to void junk. Because an entry
 	// can be set to 0 if we dont use it.
 	// MAKES THE OS CRASH, DONT USE IT
 	// memset(idt_entries, 0, 64 * 256);
 
-	idt_set_entry(&idt_entries[0] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[1] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[2] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[3] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[4] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[5] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[6] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[7] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[8] , (uint32_t)isr_default, 0x08, 0x8E);
-	idt_set_entry(&idt_entries[9] , (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[0], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[1], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[2], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[3], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[4], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[5], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[6], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[7], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[8], (uint32_t)isr_default, 0x08, 0x8E);
+	idt_set_entry(&idt_entries[9], (uint32_t)isr_default, 0x08, 0x8E);
 	idt_set_entry(&idt_entries[10], (uint32_t)isr_default, 0x08, 0x8E);
 	idt_set_entry(&idt_entries[11], (uint32_t)isr_default, 0x08, 0x8E);
 	idt_set_entry(&idt_entries[12], (uint32_t)isr_default, 0x08, 0x8E);
@@ -109,6 +110,7 @@ void init_idt()
 	port_byte_out(0x21, 0x00);
 	port_byte_out(0xA1, 0x00);
 
+	idt_set_entry(&idt_entries[IRQ0], (uint32_t)timer_callback, 0x08, 0x8E);
 	idt_set_entry(&idt_entries[IRQ1], (uint32_t)keyboard_callback, 0x08, 0x8E);
 
 
@@ -127,7 +129,7 @@ static void idt_set_entry(idt_entry_t* entry, uint32_t base, uint16_t sel, uint8
 {
 	entry->base_lo = base & 0xFFFF;
 	entry->base_hi = base >> 16;
-	entry->sel = sel;
+	entry->sel	   = sel;
 	entry->always0 = 0;
-	entry->flags = flags;
+	entry->flags   = flags;
 }

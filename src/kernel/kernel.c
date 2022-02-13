@@ -1,6 +1,14 @@
+/**
+ * @file kernel.c
+ * @brief Kernel entry point
+ * @version 0.1
+ */
+
 #include "drivers/disk/ata/ata.h"
+#include "drivers/keyboard/keyboard.h"
 #include "drivers/screen/color/color.h"
 #include "drivers/screen/print/print.h"
+#include "drivers/timer/timer.h"
 #include "interrupts/interrupts.h"
 #include "stdlibs/stdlib.h"
 #include "stdlibs/string.h"
@@ -8,21 +16,31 @@
 #include <stdint.h>
 extern int main()
 {
-	// idt setup
+	// IDT
 	init_idt();
-	// Enable keyboard interupts
-	port_byte_out(0x21, 0xFD);
-	// Enable interrupts
-	asm volatile("sti");
 
-	for (int i = 0; i < MAX_ROWS; i++)
-	{
-		k_print_number(i);
-		k_put_char('\n');
-	}
-	k_print_at("0123456789ABCDEF", 0, 0);
-	k_put_char('H');
-	k_put_char_at('A', 15, 10);
+	// KEYBOARD
+	// init_keyboard();
+	// port_byte_out(0x21, 0xFD);
+
+	// TIMER
+	init_timer(100);
+
+	// Enable interrupts
+	asm volatile("sti"); // Set Interrupt Flag
+
+
+	// --------------------------------
+	// --------- TESTING CODE ---------
+	// --------------------------------
+
+	// while (1)
+	//{
+	//	if (is_key_pressed(30) == PRESSED)
+	//	{
+	//		k_print("a");
+	//	}
+	// }
 
 	return 0;
 }

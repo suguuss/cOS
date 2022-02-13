@@ -10,6 +10,7 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/string.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/timer.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/color.o
@@ -48,6 +49,10 @@ $(K_BUILD_DIR)/ata.o: drivers/disk/ata/ata.c drivers/disk/ata/ata.h
 
 # ----------- KEYBOARD -----------
 $(K_BUILD_DIR)/keyboard.o: drivers/keyboard/keyboard.c drivers/keyboard/keyboard.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -mgeneral-regs-only -c $< -o $@
+
+# ----------- TIMER -----------
+$(K_BUILD_DIR)/timer.o: drivers/timer/timer.c drivers/timer/timer.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -mgeneral-regs-only -c $< -o $@
 
 # ------------ CURSOR ------------

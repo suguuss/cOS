@@ -10,12 +10,18 @@
 #include "../../stdlibs/stdlib.h"
 #include "../screen/print/print.h" // TO REMOVE - DEBUG ONLY
 #include "ch-fr_keymap.h"
+
 // --------- PRIVATE DEFINES ---------
 // REGISTERS
 #define KB_DATA_PORT		0x60
 #define KB_STATUS_REGISTER	0x64 // READ
 #define KB_COMMAND_REGISTER 0x64 // WRITE
 
+
+// SCAN CODE INDEXED - KEY PRESSED STATUS
+bool g_key_pressed[128];
+
+// https://wiki.osdev.org/Interrupt_Service_Routines#Compiler_Specific_Interrupt_Directives
 // The void* a is unused but is needed to avoid a compilation error
 __attribute__((interrupt)) void keyboard_callback(void* a)
 {
@@ -25,14 +31,28 @@ __attribute__((interrupt)) void keyboard_callback(void* a)
 	// Prints only when the key is pressed and not released
 	if ((scancode & 0x80) == 0) // Pressed
 	{
+		g_key_pressed[scancode] = PRESSED;
 		k_put_char(keyboard_map[scancode]);
+
+		// k_print_number(scancode);
 	}
 	else // Released
 	{
+		g_key_pressed[scancode] = RELEASED;
 		// k_put_char(keyboard_map[scancode & 0x7F]);
 		//  Do nothing
 	}
 
 	// End Of Interrupt (EOI)
 	port_byte_out(0x20, 0x20);
+}
+
+void init_keyboard()
+{
+	port_byte_out(0x21, 0xFD);
+}
+
+bool is_key_pressed(uint8_t scancode)
+{
+	return g_key_pressed[scancode];
 }

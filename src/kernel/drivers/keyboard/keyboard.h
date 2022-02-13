@@ -10,6 +10,16 @@
 
 #include "../ports/ports.h"
 
-void keyboard_callback(void *a);
+#include <stdbool.h>
+
+
+// DEFINES
+#define PRESSED	 true
+#define RELEASED false
+
+void keyboard_callback(void* a);
+void init_keyboard();
+bool is_key_pressed(uint8_t scancode);
+
 
 #endif
