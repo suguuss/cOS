@@ -1,5 +1,6 @@
 # cOS, an OS made in C
 
+
 ## Dependencies
 
 ### make
@@ -10,9 +11,6 @@ Compiles assembly code into machine code.
 
 ### mtools
 A collection of utilities for manipulating MS-DOS filesystems.
-
----
-## Installation of the dependencies
 
 ### Install on Manjaro / Arch	
 ```
@@ -37,6 +35,10 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
 ## Repository structure
 ```
 .
+├── build
+│   ├── bootloader.bin
+│   ├── kernel.bin
+│   └── os.bin
 ├── Docs
 │   ├── assets
 │   │   └── drive.png
@@ -46,6 +48,7 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
 │   └── TODO.md
 ├── LICENSE
 ├── Makefile
+├── qemu.log
 ├── README.md
 ├── scripts
 │   ├── setup-gcc-arch.sh
@@ -55,12 +58,26 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
     │   ├── bootsector.asm
     │   └── Makefile
     └── kernel
+        ├── build
+        │   ├── ata.o
+        │   ├── color.o
+        │   ├── cursor.o
+        │   ├── interrupts.o
+        │   ├── kernel_entry.o
+        │   ├── kernel.o
+        │   ├── keyboard.o
+        │   ├── ports.o
+        │   ├── print.o
+        │   ├── stdlib.o
+        │   ├── string.o
+        │   └── timer.o
         ├── drivers
         │   ├── disk
         │   │   └── ata
         │   │       ├── ata.c
         │   │       └── ata.h
         │   ├── keyboard
+        │   │   ├── ch-fr_keymap.h
         │   │   ├── keyboard.c
         │   │   └── keyboard.h
         │   ├── ports
@@ -83,6 +100,8 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
         ├── kernel_entry.asm
         ├── Makefile
         └── stdlibs
+            ├── stdlib.c
+            ├── stdlib.h
             ├── string.c
             └── string.h
 ```
