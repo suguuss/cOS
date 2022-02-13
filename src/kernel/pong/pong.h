@@ -78,6 +78,7 @@ void pong_show_ball(ball_t b);
 void pong_show_paddles(paddle_t p1, paddle_t p2);
 void draw_game(pong_game_t g);
 void pong_move_ball(pong_game_t* g);
+void show_score(pong_game_t g);
 void pong_run();
 
 

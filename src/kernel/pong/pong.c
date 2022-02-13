@@ -122,6 +122,7 @@ void draw_game(pong_game_t g)
 {
 	pong_show_ball(g.ball);
 	pong_show_paddles(g.paddle_left, g.paddle_right);
+	show_score(g);
 }
 
 /**
@@ -215,6 +216,13 @@ void pong_paddle_move_down(paddle_t* p)
 	}
 }
 
+void show_score(pong_game_t g)
+{
+	k_print_number_at(g.score_left, MAX_COLS / 2 - 2, 1);
+	k_print_at(" - ", MAX_COLS / 2 - 1, 1);
+	k_print_number_at(g.score_right, MAX_COLS / 2 + 2, 1);
+}
+
 void pong_run()
 {
 	pong_game_t game;
@@ -227,6 +235,8 @@ void pong_run()
 			reset_ticker();
 
 			pong_move_ball(&game);
+
+			// LEFT PADDLE MOVING
 			if (is_key_pressed(KEY_W))
 			{
 				pong_paddle_move_up(&game.paddle_left);
@@ -235,6 +245,9 @@ void pong_run()
 			{
 				pong_paddle_move_down(&game.paddle_left);
 			}
+
+			// IA RIGHT PADDLE
+			game.paddle_right.pos.y = game.ball.pos.y;
 
 			draw_game(game);
 		}

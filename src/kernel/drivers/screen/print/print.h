@@ -31,4 +31,5 @@ void k_print(char* text);
 void k_print_at(char* text, uint16_t x, uint16_t y);
 void k_cclear(fb_color_t bg_color);
 void k_print_number(int number);
+void k_print_number_at(int number, uint16_t x, uint16_t y);
 #endif // PRINT_H

@@ -135,3 +135,9 @@ void k_print_number(int number)
 	itoa(number, buffer);
 	k_print(buffer);
 }
+
+void k_print_number_at(int number, uint16_t x, uint16_t y)
+{
+	set_cursor(x + (y * MAX_COLS));
+	k_print_number(number);
+}
