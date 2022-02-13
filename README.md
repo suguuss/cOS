@@ -1,6 +1,42 @@
 # cOS, an OS made in C
 ---
 
+- [cOS, an OS made in C](#cos--an-os-made-in-c)
+  * [The Operating System](#the-operating-system)
+    + [:minidisc: Bootloader](#-minidisc--bootloader)
+      - [Legacy booting](#legacy-booting)
+      - [:floppy_disk: FAT32](#-floppy-disk--fat32)
+      - [:dvd: Reading sectors from the 'disk'](#-dvd--reading-sectors-from-the--disk-)
+      - [:page_with_curl: GDT - Global Desriptor Table](#-page-with-curl--gdt---global-desriptor-table)
+      - [:lock: Protected Mode](#-lock--protected-mode)
+    + [:desktop_computer: Kernel](#-desktop-computer--kernel)
+      - [:electric_plug: Ports](#-electric-plug--ports)
+      - [:stopwatch: Interrupts](#-stopwatch--interrupts)
+        * [:scroll: IDT - Interrupt Descriptor Table](#-scroll--idt---interrupt-descriptor-table)
+      - [:keyboard: Keyboard](#-keyboard--keyboard)
+      - [:hourglass: Timer / PIC - Programmable Interrupt Controller](#-hourglass--timer---pic---programmable-interrupt-controller)
+      - [:desktop_computer: Screen](#-desktop-computer--screen)
+        * [Cursor](#cursor)
+        * [Color](#color)
+        * [Printing](#printing)
+        * [Scrolling](#scrolling)
+      - [:cd: Disk I/O](#-cd--disk-i-o)
+        * [Read / Write](#read---write)
+  * [:rocket: Dependencies](#-rocket--dependencies)
+    + [make](#make)
+    + [nasm](#nasm)
+    + [mtools](#mtools)
+    + [Install on Manjaro / Arch](#install-on-manjaro---arch)
+    + [Install on Ubuntu](#install-on-ubuntu)
+    + [Install on Fedora / CentOS](#install-on-fedora---centos)
+    + [Building the cross compiler](#building-the-cross-compiler)
+  * [Repository structure](#repository-structure)
+- [Links](#links)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
+
 ## The Operating System
 
 ### :minidisc: Bootloader
