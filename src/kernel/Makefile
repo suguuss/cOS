@@ -10,12 +10,14 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/string.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/stdlib.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/timer.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/color.o
-OBJECTS_TO_LINK += $(K_BUILD_DIR)/stdlib.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/pong.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
+
 
 # --------------------------------------------------
 # --------------- LINKING OBJECTS ------------------
@@ -27,6 +29,7 @@ $(BUILD_DIR)/kernel.bin: pre-build $(OBJECTS_TO_LINK)
 # --------------------------------------------------
 # --------------- GETTING OBJECTS ------------------
 # --------------------------------------------------
+
 # --------- KERNEL ENTRY ---------
 $(K_BUILD_DIR)/kernel_entry.o: kernel_entry.asm
 	$(ASM) $< -f elf -o $@
@@ -73,6 +76,10 @@ $(K_BUILD_DIR)/string.o: stdlibs/string.c stdlibs/string.h
 
 # ------------ STDLIB ------------
 $(K_BUILD_DIR)/stdlib.o: stdlibs/stdlib.c stdlibs/stdlib.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+
+# ------------ PONG ------------
+$(K_BUILD_DIR)/pong.o: pong/pong.c pong/pong.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 

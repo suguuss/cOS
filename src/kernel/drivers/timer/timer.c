@@ -13,21 +13,39 @@
 #include "../../drivers/ports/ports.h"
 #include "../../drivers/screen/print/print.h"
 
-int g_timer_ticks = 0;
-
+bool g_flag_tick = false;
 
 /**
  * @brief Timer Callback - Called every period of frequency set at init
+ * 	Sets a global flag to true every period
  * The void* a is unused but is needed to avoid a compilation error
  *
  */
 __attribute__((interrupt)) void timer_callback(void* a)
 {
-	k_print_number(g_timer_ticks++);
-	k_print(" ");
-
+	g_flag_tick = true;
 	// READING CONFIRMATION (EOI)
 	port_byte_out(0x20, 0x20);
+}
+
+/**
+ * @brief Return the status of tick flag
+ *
+ * @return true
+ * @return false
+ */
+bool ticker_ticked()
+{
+	return g_flag_tick;
+}
+
+/**
+ * @brief Reset the ticked flag
+ *
+ */
+void reset_ticker()
+{
+	g_flag_tick = false;
 }
 
 /**

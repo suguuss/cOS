@@ -32,7 +32,7 @@ __attribute__((interrupt)) void keyboard_callback(void* a)
 	if ((scancode & 0x80) == 0) // Pressed
 	{
 		g_key_pressed[scancode] = PRESSED;
-		k_put_char(keyboard_map[scancode]);
+		// k_put_char(keyboard_map[scancode]);
 
 		// k_print_number(scancode);
 	}
@@ -54,5 +54,7 @@ void init_keyboard()
 
 bool is_key_pressed(uint8_t scancode)
 {
-	return g_key_pressed[scancode];
+	bool tmp				= g_key_pressed[scancode];
+	g_key_pressed[scancode] = NOT_PRESSED;
+	return tmp;
 }

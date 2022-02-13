@@ -19,6 +19,8 @@
 #define TIMER_COMMAND	 0x43
 
 void init_timer(uint32_t);
+bool ticker_ticked();
+void reset_ticker();
 void timer_callback(void*);
 
 

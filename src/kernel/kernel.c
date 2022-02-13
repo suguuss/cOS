@@ -10,6 +10,7 @@
 #include "drivers/screen/print/print.h"
 #include "drivers/timer/timer.h"
 #include "interrupts/interrupts.h"
+#include "pong/pong.h"
 #include "stdlibs/stdlib.h"
 #include "stdlibs/string.h"
 
@@ -24,20 +25,22 @@ extern int main()
 	// port_byte_out(0x21, 0xFD);
 
 	// TIMER
-	init_timer(100);
+	init_timer(10);
 
 	// Enable interrupts
 	asm volatile("sti"); // Set Interrupt Flag
 
 
 	// --------------------------------
-	// --------- TESTING CODE ---------
+	// ------------- PONG -------------
 	// --------------------------------
+	pong_run();
 
 	// while (1)
 	//{
-	//	if (is_key_pressed(30) == PRESSED)
+	//	if (is_key_pressed(30))
 	//	{
+	//		reset_ticker();
 	//		k_print("a");
 	//	}
 	// }

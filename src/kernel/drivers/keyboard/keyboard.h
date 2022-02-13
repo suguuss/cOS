@@ -14,12 +14,12 @@
 
 
 // DEFINES
-#define PRESSED	 true
-#define RELEASED false
+#define PRESSED		true
+#define RELEASED	false
+#define NOT_PRESSED false
 
 void keyboard_callback(void* a);
 void init_keyboard();
 bool is_key_pressed(uint8_t scancode);
-
 
 #endif
