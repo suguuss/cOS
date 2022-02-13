@@ -96,6 +96,69 @@ void ata_write_sector(uint32_t LBA, uint8_t sectorcount, uint8_t* in)
 	}
 }
 
+/**
+ * @brief Read one byte from a sector of the disk
+ * 
+ * @param addr address of the block
+ * @param offset offset of the byte in the block
+ * 
+ * @return byte read
+ */
+uint8_t ata_read_byte(uint32_t addr, uint16_t offset)
+{
+	uint8_t sector[512];
+	ata_read_sector(addr, 1, sector);
+
+	return sector[offset];
+}
+
+/**
+ * @brief Read one word (16 bits) from a sector of the disk
+ * 
+ * @param addr address of the block
+ * @param offset offset of the byte in the block
+ * 
+ * @return word read
+ */
+uint16_t ata_read_word(uint32_t addr, uint16_t offset)
+{
+	uint8_t sector[512];
+	uint16_t tmp;
+
+	// Read the whole sector
+	ata_read_sector(addr, 1, sector);
+
+	// Read the two bytes and convert from little endian to big endian
+	tmp  = sector[offset];
+	tmp |= sector[offset + 1] << 8;
+
+	return tmp;
+}
+
+/**
+ * @brief Read one double word (32 bits) from a sector of the disk
+ * 
+ * @param addr address of the block
+ * @param offset offset of the byte in the block
+ * 
+ * @return dword read
+ */
+uint32_t ata_read_dword(uint32_t addr, uint16_t offset)
+{
+	uint8_t sector[512];
+	uint32_t tmp;
+
+	// Read the whole sector
+	ata_read_sector(addr, 1, sector);
+
+	// Read the two bytes and convert from little endian to big endian
+	tmp  = sector[offset];
+	tmp |= sector[offset + 1] << 8;
+	tmp |= sector[offset + 2] << 16;
+	tmp |= sector[offset + 3] << 24;
+
+	return tmp;
+}
 
 static void wait_while_BSY()
 {
