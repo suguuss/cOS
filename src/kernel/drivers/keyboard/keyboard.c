@@ -49,7 +49,25 @@ __attribute__((interrupt)) void keyboard_callback(void* a)
 
 void init_keyboard()
 {
-	port_byte_out(0x21, 0xFD);
+	// Enable the IRQ1
+	port_byte_out(0x21, port_byte_in(0x21) & ~0x02);
+
+	// Each bit represent an interruption, if the bit is set to 1, 
+	// the interrupt is DISABLED, if the bit is set to 0 the interrupt 
+	// is ENABLED
+
+	// 0 = DISABLE
+	// 1 = ENABLE
+
+	// 00000000
+	// |||||||+-- IRQ 0
+	// ||||||+--- IRQ 1
+	// |||||+---- IRQ 2
+	// ||||+----- IRQ 3
+	// |||+------ IRQ 4
+	// ||+------- IRQ 5
+	// |+-------- IRQ 6
+	// +--------- IRQ 7
 }
 
 bool is_key_pressed(uint8_t scancode)
