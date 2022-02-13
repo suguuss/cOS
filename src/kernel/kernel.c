@@ -30,6 +30,10 @@ extern int main()
 	// Enable interrupts
 	asm volatile("sti"); // Set Interrupt Flag
 
+	// fb_color_t test = GET_FONT_COLOR(FB_CYAN, FB_WHITE);
+	// set_font_color_whole(test);
+	//// set_font_color(FB_RED, FB_WHITE);
+	// k_print_at("Hello World!", 0, 0);
 
 	// --------------------------------
 	// ------------- PONG -------------

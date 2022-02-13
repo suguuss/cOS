@@ -15,6 +15,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+// SYMBOLS
+#define BALL_SYMBOL	  '#'
+#define PADDLE_SYMBOL '|'
+
+// COLORS
+#define BACK_COLOR	  FB_BLACK
+#define BALL_COLOR	  FB_RED
+#define LPADDLE_COLOR FB_BLUE
+#define RPADDLE_COLOR FB_GREEN
+
+
 typedef struct
 {
 	int8_t x;

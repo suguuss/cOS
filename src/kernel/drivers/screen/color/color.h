@@ -48,6 +48,7 @@ typedef uint16_t font_color_t;
 
 // FULL FONT
 void		 set_font_color(fb_color_t fg_color, fb_color_t bg_color);
+void		 set_font_color_whole(font_color_t fc);
 font_color_t get_font_color();
 
 // FOREGROUND

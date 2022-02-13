@@ -8,6 +8,7 @@
 
 #include "pong.h"
 
+#include "../drivers/keyboard/keyboard.h"
 #include "../drivers/screen/print/print.h"
 #include "../drivers/timer/timer.h"
 
@@ -49,8 +50,8 @@ void pong_set_ball(ball_t* ball, coord_t pos, coord_t vel)
 	ball->pos.y	 = pos.y;
 	ball->vel.x	 = vel.x;
 	ball->vel.y	 = vel.y;
-	ball->color	 = GET_FONT_COLOR(FB_RED, FB_WHITE); // HARD CODED FOR NOW
-	ball->symbol = '#';								 // HARD CODED FOR NOW
+	ball->color	 = GET_FONT_COLOR(BALL_COLOR, BACK_COLOR); // HARD CODED FOR NOW
+	ball->symbol = BALL_SYMBOL;							   // HARD CODED FOR NOW
 }
 
 /**
@@ -62,14 +63,14 @@ void pong_set_ball(ball_t* ball, coord_t pos, coord_t vel)
 void pong_set_paddles(paddle_t* p1, paddle_t* p2)
 {
 	p1->width = MAX_ROWS / 4;
-	p1->pos.x = 1;								   // SHIFT IT BY ONE COL
-	p1->pos.y = (MAX_ROWS / 2) - (p1->width / 2);  // CENTER IT
-	p1->color = GET_FONT_COLOR(FB_BLUE, FB_WHITE); // HARD CODED FOR NOW
+	p1->pos.x = 1;										   // SHIFT IT BY ONE COL
+	p1->pos.y = (MAX_ROWS / 2) - (p1->width / 2);		   // CENTER IT
+	p1->color = GET_FONT_COLOR(LPADDLE_COLOR, BACK_COLOR); // HARD CODED FOR NOW
 
 	p2->width = MAX_ROWS / 4;
-	p2->pos.x = MAX_COLS - 2;						// SHIFT IT BY ONE COL FROM THE RIGHT
-	p2->pos.y = (MAX_ROWS / 2) - (p2->width / 2);	// CENTER IT
-	p2->color = GET_FONT_COLOR(FB_GREEN, FB_WHITE); // HARD CODED FOR NOW
+	p2->pos.x = MAX_COLS - 2;							   // SHIFT IT BY ONE COL FROM THE RIGHT
+	p2->pos.y = (MAX_ROWS / 2) - (p2->width / 2);		   // CENTER IT
+	p2->color = GET_FONT_COLOR(RPADDLE_COLOR, BACK_COLOR); // HARD CODED FOR NOW
 }
 
 /**
@@ -79,7 +80,7 @@ void pong_set_paddles(paddle_t* p1, paddle_t* p2)
  */
 void pong_show_ball(ball_t b)
 {
-	set_font_color(get_foreground_color(b.color), get_background_color(b.color));
+	set_font_color_whole(b.color);
 
 	// CLEAR PREVIOUS BALL
 	k_put_char_at(' ', b.pos.x - b.vel.x, b.pos.y - b.vel.y);
@@ -95,18 +96,25 @@ void pong_show_ball(ball_t b)
  */
 void pong_show_paddles(paddle_t p1, paddle_t p2)
 {
+	// CLEAR PREVIOUS PADDLES
+	for (int i = 0; i < MAX_ROWS; i++)
+	{
+		k_put_char_at(' ', p1.pos.x, i);
+		k_put_char_at(' ', p2.pos.x, i);
+	}
+
 	// PADDLE 1
-	set_font_color(get_foreground_color(p1.color), get_background_color(p1.color));
+	set_font_color_whole(p1.color);
 	for (int i = 0; i < p1.width; i++)
 	{
-		k_put_char_at('|', p1.pos.x, p1.pos.y + i);
+		k_put_char_at(PADDLE_SYMBOL, p1.pos.x, p1.pos.y + i);
 	}
 
 	// PADDLE 2
-	set_font_color(get_foreground_color(p2.color), get_background_color(p2.color));
+	set_font_color_whole(p2.color);
 	for (int i = 0; i < p2.width; i++)
 	{
-		k_put_char_at('|', p2.pos.x, p2.pos.y + i);
+		k_put_char_at(PADDLE_SYMBOL, p2.pos.x, p2.pos.y + i);
 	}
 }
 
@@ -172,23 +180,58 @@ void pong_move_ball(pong_game_t* g)
 			g->ball.vel.x *= -1;
 		}
 	}
-
-
 	g->ball.pos.x += g->ball.vel.x;
 	g->ball.pos.y += g->ball.vel.y;
+}
+
+/**
+ * @brief Move the paddle up by one
+ *
+ * @param p
+ */
+void pong_paddle_move_up(paddle_t* p)
+{
+	if (p->pos.y > 0)
+	{
+		p->pos.y--;
+	}
+}
+
+/**
+ * @brief Move the paddle down by 1
+ *
+ * @param p
+ */
+void pong_paddle_move_down(paddle_t* p)
+{
+	if (p->pos.y < MAX_ROWS - 1)
+	{
+		p->pos.y++;
+	}
 }
 
 void pong_run()
 {
 	pong_game_t game;
 	pong_set_game(&game);
+	k_cclear(BACK_COLOR);
 	while (1)
 	{
 		if (ticker_ticked())
 		{
 			reset_ticker();
-			draw_game(game);
+
 			pong_move_ball(&game);
+			if (is_key_pressed(KEY_W))
+			{
+				pong_paddle_move_up(&game.paddle_left);
+			}
+			else if (is_key_pressed(KEY_S))
+			{
+				pong_paddle_move_down(&game.paddle_left);
+			}
+
+			draw_game(game);
 		}
 	}
 }

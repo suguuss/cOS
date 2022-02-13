@@ -12,6 +12,12 @@
 
 #include <stdbool.h>
 
+// SCANC CODES
+#define KEY_W	0x11
+#define KEY_A	0x1E
+#define KEY_S	0x1F
+#define KEY_D	0x20
+#define KEY_ESC 0x01
 
 // DEFINES
 #define PRESSED		true
