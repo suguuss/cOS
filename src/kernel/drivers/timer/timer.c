@@ -37,8 +37,14 @@ __attribute__((interrupt)) void timer_callback(void* a)
  */
 void init_timer(uint32_t freq)
 {
+	// ------------- PIT - Programmable Interval Timer -------------
+	// The idea is to trigger a callback at a Given period
+	// It works by dividing a base hardware clock @ 1193180 Hz
+	// We actually set a reload value of a counter counting backwards
+	// and triggering a callback when it reaches 0
+
 	// 1193180 for the 1.193180 MHz
-	// random fucking clock because backward compatibility
+	// random fucking clock because of random old stuff again
 	uint32_t div = 1193180 / freq;
 
 	// https://wiki.osdev.org/Programmable_Interval_Timer#I.2FO_Ports
