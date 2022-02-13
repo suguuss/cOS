@@ -55,6 +55,27 @@ void reset_ticker()
  */
 void init_timer(uint32_t freq)
 {
+	// Enable the IRQ0
+	port_byte_out(0x21, port_byte_in(0x21) & ~0x01);
+
+	// Each bit represent an interruption, if the bit is set to 1, 
+	// the interrupt is DISABLED, if the bit is set to 0 the interrupt 
+	// is ENABLED
+
+	// 0 = DISABLE
+	// 1 = ENABLE
+
+	// 00000000
+	// |||||||+-- IRQ 0
+	// ||||||+--- IRQ 1
+	// |||||+---- IRQ 2
+	// ||||+----- IRQ 3
+	// |||+------ IRQ 4
+	// ||+------- IRQ 5
+	// |+-------- IRQ 6
+	// +--------- IRQ 7
+
+
 	// ------------- PIT - Programmable Interval Timer -------------
 	// The idea is to trigger a callback at a Given period
 	// It works by dividing a base hardware clock @ 1193180 Hz
