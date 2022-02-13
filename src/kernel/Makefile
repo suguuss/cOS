@@ -10,10 +10,11 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/keyboard.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/string.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/stdlib.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/color.o
-OBJECTS_TO_LINK += $(K_BUILD_DIR)/stdlib.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/fat32.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
 
 # --------------------------------------------------
@@ -70,6 +71,9 @@ $(K_BUILD_DIR)/string.o: stdlibs/string.c stdlibs/string.h
 $(K_BUILD_DIR)/stdlib.o: stdlibs/stdlib.c stdlibs/stdlib.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
+# ------------ FAT32 -------------
+$(K_BUILD_DIR)/fat32.o: drivers/disk/fat32/fat32.c drivers/disk/fat32/fat32.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
 
 

@@ -1,7 +1,15 @@
-#include "drivers/disk/ata/ata.h"
+/**
+ * @file kernel.c
+ * @brief KERNEL 
+ * @version 0.1
+ * @date 02-02-2022
+ */
+
 #include "drivers/screen/color/color.h"
 #include "drivers/screen/print/print.h"
+#include "drivers/disk/fat32/fat32.h"
 #include "interrupts/interrupts.h"
+#include "drivers/disk/ata/ata.h"
 #include "stdlibs/stdlib.h"
 #include "stdlibs/string.h"
 
