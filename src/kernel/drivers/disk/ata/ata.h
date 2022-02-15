@@ -18,4 +18,8 @@ uint8_t ata_read_byte(uint32_t addr, uint16_t offset);
 uint16_t ata_read_word(uint32_t addr, uint16_t offset);
 uint32_t ata_read_dword(uint32_t addr, uint16_t offset);
 
+void ata_write_byte(uint32_t addr, uint16_t offset, uint8_t value);
+void ata_write_word(uint32_t addr, uint16_t offset, uint16_t value);
+void ata_write_dword(uint32_t addr, uint16_t offset, uint32_t value);
+
 #endif
