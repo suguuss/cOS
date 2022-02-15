@@ -22,7 +22,7 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
 # --------------------------------------------------
 $(BUILD_DIR)/kernel.bin: pre-build $(OBJECTS_TO_LINK)
 	@echo ----------- COMPILING KERNEL -----------	
-	$(TARGET_LD) -o $(BUILD_DIR)/kernel.bin -Ttext 0x1000 $(OBJECTS_TO_LINK) --oformat binary
+	$(TARGET_LD) -o $(BUILD_DIR)/kernel.bin -Ttext $(KERNEL_ADDR) $(OBJECTS_TO_LINK) --oformat binary
 
 # --------------------------------------------------
 # --------------- GETTING OBJECTS ------------------

@@ -7,6 +7,8 @@
 
 #include "fat32.h"
 #include "../ata/ata.h"
+
+
 /**
  * @brief Parse the boot sector and stores the most important
  * informations inside a BootSector struct
@@ -28,3 +30,5 @@ BootSector fat32_parse_bootsector()
 
 	return bs;
 }
+
+
