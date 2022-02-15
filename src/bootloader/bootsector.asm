@@ -2,7 +2,7 @@ org 0x7C00		; Base adress of the bootloader
 				; Shifts the address by the offset of the bootloader
 bits 16
 
-KERNEL_ADDR equ 0x1000
+KERNEL_ADDR equ 0x8000
 
 ; --------------------------------------------------
 ; ----------------- FAT 32 HEADER ------------------

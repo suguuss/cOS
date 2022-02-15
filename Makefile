@@ -12,6 +12,8 @@ CURRENT_DIR 			= $(shell pwd)
 export BUILD_DIR 		= $(CURRENT_DIR)/build
 export BUILD_DIR 		= $(CURRENT_DIR)/build
 
+export KERNEL_ADDR		= 0x8000
+
 .PHONY: all run os bootloader kernel pre-build clean
 
 all: clean os
@@ -30,9 +32,15 @@ $(BUILD_DIR)/os.bin: pre-build bootloader kernel
 	@echo ------------ BUILDING IMAGE ------------
 	@dd if=/dev/zero of=$@ bs=512 count=4096 status=none
 	@mkfs.fat -I -F 32 -n boot $@ 2>/dev/null 1>/dev/null
+
+	@# --- ADD A FILE IN THE ROOT DIR (TEST PURPOSE ONLY) ---
+	@echo "Hello World!" > test.txt
+	@mcopy -i $@ test.txt ::test.txt
+	@rm test.txt
+	@# --- ADD A FILE IN THE ROOT DIR (TEST PURPOSE ONLY) ---
+
 	@dd if=$(BUILD_DIR)/kernel.bin of=$@ conv=notrunc seek=1 status=none
 	@dd if=$(BUILD_DIR)/bootloader.bin of=$@ conv=notrunc status=none
-
 
 # --------------------------------------------------
 # ------------------ BOOTLOADER --------------------
