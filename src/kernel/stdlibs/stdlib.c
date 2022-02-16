@@ -73,5 +73,6 @@ void* malloc(uint32_t size)
 	//Iterate all the metadata block to find a free data block
 		//Check if the block size is bigger or equivalent
 			//Reduce the size and create a new metadata block for the next
-			
+	
+	//Return the pointer to the starting address of the block
 }
