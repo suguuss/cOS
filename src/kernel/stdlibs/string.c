@@ -22,6 +22,14 @@ void memset(void* addr, uint8_t v, uint32_t n)
 	}
 }
 
+void memcpy(void* dest, const void* src, uint32_t size)
+{
+	while (size--)
+	{
+		*((uint8_t*)dest++) = *((uint8_t*)src++);
+	}
+}
+
 /**
  * @brief Get the lenght of a given string
  *

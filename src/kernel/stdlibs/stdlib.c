@@ -70,3 +70,5 @@ void init_heap(heap_t* heap)
 	heap->start = (uint8_t *)0x200000;	//Heap starts at 2Mib
 	heap->end = (uint8_t *)0x400000;	//Heap ends at 4Mib
 }
+
+
