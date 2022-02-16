@@ -6,8 +6,23 @@
  */
 
 #include "stdlib.h"
-
 #include "string.h"
+
+// STRUCTS
+typedef struct heap 
+{
+	volatile uint8_t *start;
+	volatile uint8_t *end;
+} heap_t;
+
+typedef struct block_metadata 
+{
+	uint32_t size;	//Block size
+	bool is_free;	//Block state (Allocated or not)
+	struct block_metadata *next;	//Pointer to the next metadata block
+	uint8_t *start;	//Pointer to the start of the allocated block
+} block_metadata_t;
+
 
 /**
  * @breif Put a uint number into a string
@@ -48,4 +63,10 @@ void itoa(int16_t number, char* out_str)
 	{
 		uitoa(number, out_str);
 	}
+}
+
+void init_heap(heap_t* heap)
+{
+	heap->start = (uint8_t *)0x200000;	//Heap starts at 2Mib
+	heap->end = (uint8_t *)0x400000;	//Heap ends at 4Mib
 }
