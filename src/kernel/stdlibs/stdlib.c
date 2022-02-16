@@ -8,22 +8,6 @@
 #include "stdlib.h"
 #include "string.h"
 
-// STRUCTS
-typedef struct heap 
-{
-	volatile uint8_t *start;
-	volatile uint8_t *end;
-} heap_t;
-
-typedef struct block_metadata 
-{
-	uint32_t size;	//Block size
-	bool is_free;	//Block state (Allocated or not)
-	struct block_metadata *next;	//Pointer to the next metadata block
-	uint8_t *start;	//Pointer to the start of the allocated block
-} block_metadata_t;
-
-
 /**
  * @breif Put a uint number into a string
  * STRING NEEDS TO BE LONG ENOUGH TO PUT THE NUMBER
@@ -71,4 +55,20 @@ void init_heap(heap_t* heap)
 	heap->end = (uint8_t *)0x400000;	//Heap ends at 4Mib
 }
 
+block_metadata_t* init_meta_block()
+{
+	block_metadata_t block;
 
+	block.size = 0x200000;	//Size of the heap
+	block.is_free = true; 
+	block.next = 0;
+	block.start = (uint8_t *) (0x200000 + sizeof(block) + 1); //Start of the heap + size of the block + 1
+
+	memcpy(0x200000, &block, sizeof(block)); //Copy the starting metadata block to the heap
+	return 0x200000;
+}
+
+void* malloc(uint32_t size)
+{
+
+}

@@ -8,6 +8,14 @@
 #include <stdint.h>
 extern int main()
 {
+	// Init the Heap
+	heap_t heap;
+	init_heap(&heap);
+
+	//Init the first metadata block
+	block_metadata_t *meta_head;
+	meta_head = init_meta_block();
+
 	// idt setup
 	init_idt();
 	// Enable keyboard interupts
