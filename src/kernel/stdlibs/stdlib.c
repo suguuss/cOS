@@ -64,8 +64,9 @@ block_metadata_t* init_meta_block()
 	block.next = 0;
 	block.start = (uint8_t *) (0x200000 + sizeof(block) + 1); //Start of the heap + size of the block + 1
 
-	memcpy(0x200000, &block, sizeof(block)); //Copy the starting metadata block to the heap
-	return 0x200000;
+	memcpy((uint8_t *)0x200000, &block, sizeof(block)); //Copy the starting metadata block to the heap
+	
+	return (block_metadata_t *)0x200000;
 }
 
 void* malloc(uint32_t size)
