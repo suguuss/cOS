@@ -8,6 +8,8 @@
 #include "stdlib.h"
 #include "string.h"
 
+heap_t heap;
+block_metadata_t *meta_head;
 /**
  * @breif Put a uint number into a string
  * STRING NEEDS TO BE LONG ENOUGH TO PUT THE NUMBER
@@ -72,7 +74,7 @@ block_metadata_t* init_meta_block(uint32_t size, block_metadata_t* next_block, u
 	block.size = size;
 	block.is_free = true; 
 	block.next = next_block;
-	block.start = (uint8_t *) (meta_start + sizeof(block) + 1); //Start of the heap + size of the block + 1
+	block.start = (uint8_t *) (meta_start + sizeof(block)); //Start of the heap + size of the block + 1
 
 	memcpy((uint8_t *)meta_start, &block, sizeof(block)); //Copy the starting metadata block to the heap
 	
@@ -81,9 +83,37 @@ block_metadata_t* init_meta_block(uint32_t size, block_metadata_t* next_block, u
 
 void* malloc(uint32_t size)
 {
-	//Iterate all the metadata block to find a free data block
-		//Check if the block size is bigger or equivalent
-			//Reduce the size and create a new metadata block for the next
+	block_metadata_t *tmp = meta_head;
+
+	// Loop while block is not free and there is enough space
+	while (!(tmp->is_free && tmp->size >= (size + sizeof(block_metadata_t))))
+	{
+		if (tmp->next != 0)
+		{
+			// Check the next block
+			tmp = tmp->next;
+		}
+		else
+		{
+			return 0; // Memory cannot be allocated (No free space)
+		}
+	}
 	
-	//Return the pointer to the starting address of the block
+	
+	block_metadata_t *tmp_next = 0;
+	if (tmp->next != 0)
+	{
+		// If there is a block after the one we create, 
+		// keep it's address in a variable.
+		// Otherwise, use a null address (declaration before the if)
+		tmp_next = tmp->next;
+	}
+
+	block_metadata_t *new_block = init_meta_block(tmp->size - size - sizeof(block_metadata_t), tmp_next, (uint32_t)tmp->start + size);
+
+	tmp->size = size;
+	tmp->next = new_block;
+	tmp->is_free = false;
+
+	return tmp->start;
 }

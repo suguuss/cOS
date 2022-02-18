@@ -6,13 +6,18 @@
 #include "stdlibs/string.h"
 
 #include <stdint.h>
+
 extern int main()
 {
+	extern heap_t heap;
+	extern block_metadata_t *meta_head;
+
 	// Init the Heap
-	heap_t heap = init_heap();
+	heap = init_heap();
 
 	//Init the first metadata block
-	block_metadata_t *meta_head = init_meta_block((uint32_t)heap.end - (uint32_t)heap.start, 0, (uint32_t)heap.start);
+	// La taille disponible est la taille du heap (end - start) moins la taille du premier metablock
+	meta_head = init_meta_block((uint32_t)heap.end - (uint32_t)heap.start - sizeof(block_metadata_t), 0, (uint32_t)heap.start);
 
 	// idt setup
 	// init_idt();
@@ -21,7 +26,23 @@ extern int main()
 	// // Enable interrupts
 	// asm volatile("sti");
 
-	k_print_number((uint32_t)heap.end - (uint32_t)heap.start);
+	uint8_t *test = malloc(2);
+	test[0] = 42;
+	test[1] = 69;
 
+	uint8_t *test2 = malloc(2);
+	test2[0] = 10;
+	test2[1] = 31;
+
+	k_print("Hello Kernel!");
+	k_print_number(test[0]);
+	k_print_number(test[1]);
+	k_print_number(test2[0]);
+	k_print_number(test2[1]);
+	k_print("\n");
+	k_print_number((int)test);
+	k_print("\n");
+	k_print_number((int)test2);
 	return 0;
 }
+
