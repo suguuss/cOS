@@ -49,24 +49,34 @@ void itoa(int16_t number, char* out_str)
 	}
 }
 
-void init_heap(heap_t* heap)
+heap_t init_heap()
 {
-	heap->start = (uint8_t *)0x200000;	//Heap starts at 2Mib
-	heap->end = (uint8_t *)0x400000;	//Heap ends at 4Mib
+	heap_t heap;
+
+	heap.start = (uint8_t *)0x200000;	//Heap starts at 2Mib
+	heap.end = (uint8_t *)0x400000;	//Heap ends at 4Mib
+
+	return heap;
 }
 
-block_metadata_t* init_meta_block()
+/**
+ * @breif Init a metadata block and copy it in the heap
+ * @param size
+ * @param next_block
+ * @param meta_start
+ */
+block_metadata_t* init_meta_block(uint32_t size, block_metadata_t* next_block, uint32_t meta_start)
 {
 	block_metadata_t block;
 
-	block.size = 0x200000;	//Size of the heap
+	block.size = size;
 	block.is_free = true; 
-	block.next = 0;
-	block.start = (uint8_t *) (0x200000 + sizeof(block) + 1); //Start of the heap + size of the block + 1
+	block.next = next_block;
+	block.start = (uint8_t *) (meta_start + sizeof(block) + 1); //Start of the heap + size of the block + 1
 
-	memcpy((uint8_t *)0x200000, &block, sizeof(block)); //Copy the starting metadata block to the heap
+	memcpy((uint8_t *)meta_start, &block, sizeof(block)); //Copy the starting metadata block to the heap
 	
-	return (block_metadata_t *)0x200000;
+	return (block_metadata_t *)meta_start;
 }
 
 void* malloc(uint32_t size)

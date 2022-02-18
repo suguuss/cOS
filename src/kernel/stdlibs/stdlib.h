@@ -29,7 +29,7 @@ typedef struct block_metadata
 // PROTOTYPES
 void uitoa(uint16_t number, char* out_str);
 void itoa(int16_t number, char* out_str);
-void init_heap(heap_t* heap);
-block_metadata_t* init_meta_block();
-void* malloc(uint32_t size);
+heap_t init_heap();
+block_metadata_t *init_meta_block(uint32_t size, block_metadata_t *next_block, uint32_t meta_start);
+void *malloc(uint32_t size);
 #endif //_STDLIB_H_
