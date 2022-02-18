@@ -20,32 +20,12 @@ extern int main()
 	meta_head = init_meta_block((uint32_t)heap.end - (uint32_t)heap.start - sizeof(block_metadata_t), 0, (uint32_t)heap.start);
 
 	// idt setup
-	// init_idt();
-	// // Enable keyboard interupts
-	// port_byte_out(0x21, 0xFD);
-	// // Enable interrupts
-	// asm volatile("sti");
+	init_idt();
+	// Enable keyboard interupts
+	port_byte_out(0x21, 0xFD);
+	// Enable interrupts
+	asm volatile("sti");
 
-	uint8_t *test = malloc(2);
-	test[0] = 42;
-	test[1] = 69;
-
-	uint8_t *test2 = malloc(2);
-	test2[0] = 10;
-	test2[1] = 31;
-
-	free(test);
-	uint8_t *test3 = malloc(2);
-	test3[0] = 200;
-	test3[1] = 201;
-
-	k_print("Hello Kernel!");
-	k_print_number(test[0]);
-	k_print_number(test[1]);
-	k_print_number(test2[0]);
-	k_print_number(test2[1]);
-	k_print_number(test3[0]);
-	k_print_number(test3[1]);
 	return 0;
 }
 
