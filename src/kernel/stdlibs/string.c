@@ -23,6 +23,21 @@ void memset(void* addr, uint8_t v, uint32_t n)
 }
 
 /**
+ * @brief copies values from a source address to a destination address
+ *
+ * @param dest destination address
+ * @param src source address
+ * @param n number of bytes to copy
+ */
+void memcpy(void* dest, const void* src, uint32_t size)
+{
+	while (size--)
+	{
+		*((uint8_t*)dest++) = *((uint8_t*)src++);
+	}
+}
+
+/**
  * @brief Get the lenght of a given string
  *
  * @param str

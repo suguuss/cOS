@@ -6,23 +6,46 @@
 #include "stdlibs/string.h"
 
 #include <stdint.h>
+
 extern int main()
 {
+	extern heap_t heap;
+	extern block_metadata_t *meta_head;
+
+	// Init the Heap
+	heap = init_heap();
+
+	//Init the first metadata block
+	// La taille disponible est la taille du heap (end - start) moins la taille du premier metablock
+	meta_head = init_meta_block((uint32_t)heap.end - (uint32_t)heap.start - sizeof(block_metadata_t), 0, (uint32_t)heap.start);
+
 	// idt setup
-	init_idt();
-	// Enable keyboard interupts
-	port_byte_out(0x21, 0xFD);
-	// Enable interrupts
-	asm volatile("sti");
+	// init_idt();
+	// // Enable keyboard interupts
+	// port_byte_out(0x21, 0xFD);
+	// // Enable interrupts
+	// asm volatile("sti");
 
-	for (int i = 0; i < MAX_ROWS; i++)
-	{
-		k_print_number(i);
-		k_put_char('\n');
-	}
-	k_print_at("0123456789ABCDEF", 0, 0);
-	k_put_char('H');
-	k_put_char_at('A', 15, 10);
+	uint8_t *test = malloc(2);
+	test[0] = 42;
+	test[1] = 69;
 
+	uint8_t *test2 = malloc(2);
+	test2[0] = 10;
+	test2[1] = 31;
+
+	free(test);
+	uint8_t *test3 = malloc(2);
+	test3[0] = 200;
+	test3[1] = 201;
+
+	k_print("Hello Kernel!");
+	k_print_number(test[0]);
+	k_print_number(test[1]);
+	k_print_number(test2[0]);
+	k_print_number(test2[1]);
+	k_print_number(test3[0]);
+	k_print_number(test3[1]);
 	return 0;
 }
+
