@@ -8,6 +8,10 @@
 #include "stdlib.h"
 #include "string.h"
 
+// ------------------------------------------
+//            VARIABLES GLOBALES
+// ------------------------------------------
+
 heap_t heap;
 block_metadata_t *meta_head;
 /**
@@ -51,6 +55,10 @@ void itoa(int16_t number, char* out_str)
 	}
 }
 
+/**
+ * @brief Initialise the heap memory
+ * @return heap_t
+ */
 heap_t init_heap()
 {
 	heap_t heap;
@@ -62,7 +70,7 @@ heap_t init_heap()
 }
 
 /**
- * @breif Init a metadata block and copy it in the heap
+ * @brief Init a metadata block and copy it in the heap
  * @param size
  * @param next_block
  * @param meta_start
@@ -81,12 +89,18 @@ block_metadata_t* init_meta_block(uint32_t size, block_metadata_t* next_block, u
 	return (block_metadata_t *)meta_start;
 }
 
+/**
+ * @brief Allocates memory dynamically from the heap
+ * @param size number of bytes to allocate
+ * @return void* Pointer to the newly allocated memory
+ */
 void* malloc(uint32_t size)
 {
 	block_metadata_t *tmp = meta_head;
 
 	// Loop while block is not free and there is enough space
-	while (!(tmp->is_free && tmp->size >= (size + sizeof(block_metadata_t))))
+	// while (!(tmp->is_free && tmp->size >= (size + sizeof(block_metadata_t)))) bakcup
+	while (!(tmp->is_free && tmp->size >= size))
 	{
 		if (tmp->next != 0)
 		{
@@ -99,21 +113,75 @@ void* malloc(uint32_t size)
 		}
 	}
 	
-	
-	block_metadata_t *tmp_next = 0;
-	if (tmp->next != 0)
+	if (tmp->size - size > sizeof(block_metadata_t))
 	{
-		// If there is a block after the one we create, 
-		// keep it's address in a variable.
-		// Otherwise, use a null address (declaration before the if)
-		tmp_next = tmp->next;
+		// In this case we create a new metadata block, thus breaking a big free block in two
+		
+		block_metadata_t *tmp_next = 0;
+		if (tmp->next != 0)
+		{
+			// If there is a block after the one we create, 
+			// keep it's address in a variable.
+			// Otherwise, use a null address (declaration before the if)
+			tmp_next = tmp->next;
+		}
+
+		block_metadata_t *new_block = init_meta_block(tmp->size - size - sizeof(block_metadata_t), tmp_next, (uint32_t)tmp->start + size);
+
+		tmp->size = size;
+		tmp->next = new_block;
+		tmp->is_free = false;
+	}
+	else 
+	{
+		// In this case we give a whole block without creating a new metablock even if there is a 
+		// few bytes more than what he asked
+		tmp->is_free = false;
 	}
 
-	block_metadata_t *new_block = init_meta_block(tmp->size - size - sizeof(block_metadata_t), tmp_next, (uint32_t)tmp->start + size);
-
-	tmp->size = size;
-	tmp->next = new_block;
-	tmp->is_free = false;
-
 	return tmp->start;
+}
+
+/**
+ * @brief Free memory allocated by malloc from the heap
+ * @param void* Pointer to the allocated memory
+ */
+void free(void* ptr)
+{
+	block_metadata_t *tmp = meta_head;
+
+	while (tmp->start != ptr)
+	{
+		if (tmp->next == 0)
+		{
+			// TODO: MAYBE HANDLE THIS ERROR ?
+			return;
+		}
+		tmp = tmp->next;
+	}
+
+	tmp->is_free = true;
+	// clean_heap();
+}
+
+/**
+ * @brief Cleans the heap by fusing all the free neighbours block together
+ */
+void clean_heap()
+{
+	block_metadata_t *tmp        = meta_head;
+	block_metadata_t *tmp_before = 0;
+	
+	while (tmp->next != 0)
+	{
+		tmp_before = tmp;
+		tmp = tmp->next;
+
+		if (tmp->is_free == true && tmp_before->is_free == true)
+		{
+			tmp_before->next = tmp->next;
+			tmp_before->size = tmp_before->size + tmp->size + sizeof(block_metadata_t);
+			tmp = tmp_before;
+		}
+	}
 }

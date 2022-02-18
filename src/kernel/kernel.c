@@ -34,15 +34,18 @@ extern int main()
 	test2[0] = 10;
 	test2[1] = 31;
 
+	free(test);
+	uint8_t *test3 = malloc(2);
+	test3[0] = 200;
+	test3[1] = 201;
+
 	k_print("Hello Kernel!");
 	k_print_number(test[0]);
 	k_print_number(test[1]);
 	k_print_number(test2[0]);
 	k_print_number(test2[1]);
-	k_print("\n");
-	k_print_number((int)test);
-	k_print("\n");
-	k_print_number((int)test2);
+	k_print_number(test3[0]);
+	k_print_number(test3[1]);
 	return 0;
 }
 
