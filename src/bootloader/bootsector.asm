@@ -2,7 +2,7 @@ org 0x7C00		; Base adress of the bootloader
 				; Shifts the address by the offset of the bootloader
 bits 16
 
-KERNEL_ADDR equ 0x1000
+KERNEL_ADDR equ 0x8000
 
 ; --------------------------------------------------
 ; ----------------- FAT 32 HEADER ------------------
@@ -25,7 +25,7 @@ main:
 	mov sp, bp
 
 	mov bx, KERNEL_ADDR		; Where to load the kernel es:bx
-	mov dh, 20				; Number of sector to read
+	mov dh, 28				; Number of sector to read
 
 	mov ah, 0x02			; Read Sector from drive
 	mov al, dh 				; Number of sector to read

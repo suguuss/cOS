@@ -9,10 +9,33 @@
 #define _STDLIB_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
+// STRUCTS
+typedef struct heap 
+{
+	volatile uint8_t *start;
+	volatile uint8_t *end;
+} heap_t;
+
+typedef struct block_metadata 
+{
+	uint32_t size;	//Block size
+	bool is_free;	//Block state (Allocated or not)
+	struct block_metadata *next;	//Pointer to the next metadata block
+	uint8_t *start;	//Pointer to the start of the allocated block
+} block_metadata_t;
 
 // PROTOTYPES
-void uitoa(uint16_t number, char* out_str);
-void itoa(int16_t number, char* out_str);
+void uitoa(uint32_t number, char* out_str);
+void itoa(int32_t number, char* out_str);
+
+heap_t init_heap();
+block_metadata_t *init_meta_block(uint32_t size, block_metadata_t *next_block, uint32_t meta_start);
+
+void *malloc(uint32_t size);
+void *realloc(void *ptr, uint32_t size);
+void free(void *ptr);
+void clean_heap();
 
 #endif //_STDLIB_H_

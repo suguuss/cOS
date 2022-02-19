@@ -46,7 +46,7 @@ static void idt_set_entry(idt_entry_t* entry, uint32_t base, uint16_t sel, uint8
 
 void isr_default()
 {
-	// k_cclear(FB_RED);
+	k_cclear(FB_RED);
 }
 
 void init_idt()
