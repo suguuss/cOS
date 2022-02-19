@@ -11,6 +11,8 @@
 #include "../../../stdlibs/stdlib.h"
 #include "../../screen/print/print.h"
 
+uint32_t g_current_dir_sector = 0;
+
 /**
  * @brief Change the endiannes of a value (16 bits)
  * @param uin16_t The value to modify
@@ -47,6 +49,8 @@ BootSector_t fat32_parse_bootsector()
 	bs.RootClus 	= ata_read_dword(0, ROOTCLUS_OFFSET);
 
 	bs.RootDirSector = bs.RsvdSecCnt + (bs.NumFATs * bs.FATSz32);
+
+	g_current_dir_sector = bs.RootDirSector;
 
 	return bs;
 }
@@ -116,4 +120,43 @@ uint8_t clean_filename(uint8_t* filename)
 	// Add the zero terminal
 	filename[cleanCharCnt] = 0;
 	return cleanCharCnt;
+}
+
+/**
+ * @brief Returns a list of all the files in the current directory
+ * @param BootSector_t* Bootsector struct
+ * @return FileEntry_t* List of file entries
+ */
+FileEntry_t* fat32_list_files(BootSector_t bs)
+{
+	uint8_t *sector = malloc(512);
+	uint16_t entry_offset = 0;
+	uint16_t file_count = 0;
+	// Allocate enough space for 16 files. Realloc if needed
+	FileEntry_t *file_list = malloc(sizeof(FileEntry_t) * (bs.BytsPerSec / 32));
+
+	// TODO : ADD MULTI CLUSTER SUPPORT
+
+	// Iterates all the sector inside a cluster
+	for (uint32_t sec = 0; sec < bs.SecPerClus; sec++)
+	{
+		ata_read_sector(g_current_dir_sector + sec, 1, sector);
+
+		// The first entry of the Root Directory is not a real entry and needs to be skipped
+		if (g_current_dir_sector + sec == bs.RootDirSector) {entry_offset = 32;}
+
+		for (entry_offset; entry_offset < bs.BytsPerSec; entry_offset+=32)
+		{
+			file_list[file_count] = fat32_parse_fileentry(sector, entry_offset);
+
+			if (file_list[file_count].Name[0] == 0x00) 
+			{
+				file_list = realloc(file_list, sizeof(FileEntry_t) * file_count);
+				return file_list;
+			}
+			else if (file_list[file_count].Name[0] == 0xE5);	// Deleted file
+			else if (file_list[file_count].Name[2] == 0x00);	// Long file entry not supported
+			else {file_count++;}								// Valid file
+		}
+	}
 }

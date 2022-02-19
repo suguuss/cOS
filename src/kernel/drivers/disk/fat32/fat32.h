@@ -91,4 +91,5 @@ BootSector_t fat32_parse_bootsector();
 FileEntry_t  fat32_parse_fileentry(uint8_t *sector, uint16_t offset);
 
 uint8_t clean_filename(uint8_t *filename);
+FileEntry_t* fat32_list_files(BootSector_t bs);
 #endif
