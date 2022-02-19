@@ -27,8 +27,8 @@ typedef struct block_metadata
 } block_metadata_t;
 
 // PROTOTYPES
-void uitoa(uint16_t number, char* out_str);
-void itoa(int16_t number, char* out_str);
+void uitoa(uint32_t number, char* out_str);
+void itoa(int32_t number, char* out_str);
 
 heap_t init_heap();
 block_metadata_t *init_meta_block(uint32_t size, block_metadata_t *next_block, uint32_t meta_start);

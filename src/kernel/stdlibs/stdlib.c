@@ -20,7 +20,7 @@ block_metadata_t *meta_head;
  * @param number
  * @param out_str
  */
-void uitoa(uint16_t number, char* out_str)
+void uitoa(uint32_t number, char* out_str)
 {
 	if (number < 10)
 	{
@@ -40,7 +40,7 @@ void uitoa(uint16_t number, char* out_str)
  * @param number
  * @param out_str
  */
-void itoa(int16_t number, char* out_str)
+void itoa(int32_t number, char* out_str)
 {
 	// If the number is nagative
 	if (number < 0)
