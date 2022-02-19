@@ -47,15 +47,16 @@ typedef uint16_t font_color_t;
 // PROTOTYPES
 
 // FULL FONT
-void	set_font_color(fb_color_t fg_color, fb_color_t bg_color);
+void		 set_font_color(fb_color_t fg_color, fb_color_t bg_color);
+void		 set_font_color_whole(font_color_t fc);
 font_color_t get_font_color();
 
 // FOREGROUND
 fb_color_t get_foreground_color();
-void	set_foreground_color(fb_color_t fg_color);
+void	   set_foreground_color(fb_color_t fg_color);
 
 // BACKGROUND
 fb_color_t get_background_color();
-void	set_background_color(fb_color_t bg_color);
+void	   set_background_color(fb_color_t bg_color);
 
 #endif

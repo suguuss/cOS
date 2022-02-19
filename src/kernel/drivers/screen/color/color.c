@@ -31,6 +31,16 @@ void set_font_color(fb_color_t fg_color, fb_color_t bg_color)
 }
 
 /**
+ * @brief Set the global font color
+ *
+ * @param fc
+ */
+void set_font_color_whole(font_color_t fc)
+{
+	g_font_color = fc;
+}
+
+/**
  * @brief Get the global font color
  */
 font_color_t get_font_color()
@@ -44,7 +54,7 @@ font_color_t get_font_color()
  */
 fb_color_t get_background_color()
 {
-	return g_font_color >> 4;
+	return (g_font_color >> 4);
 }
 
 /**
@@ -63,7 +73,7 @@ void set_background_color(fb_color_t bg_color)
  */
 fb_color_t get_foreground_color()
 {
-	return g_font_color & 0x0F;
+	return (g_font_color & 0x0F);
 }
 
 

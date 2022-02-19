@@ -11,11 +11,14 @@ OBJECTS_TO_LINK += $(K_BUILD_DIR)/string.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/cursor.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/kernel.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/stdlib.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/timer.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/print.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ports.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/color.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/fat32.o
+OBJECTS_TO_LINK += $(K_BUILD_DIR)/pong.o
 OBJECTS_TO_LINK += $(K_BUILD_DIR)/ata.o
+
 
 # --------------------------------------------------
 # --------------- LINKING OBJECTS ------------------
@@ -27,6 +30,7 @@ $(BUILD_DIR)/kernel.bin: pre-build $(OBJECTS_TO_LINK)
 # --------------------------------------------------
 # --------------- GETTING OBJECTS ------------------
 # --------------------------------------------------
+
 # --------- KERNEL ENTRY ---------
 $(K_BUILD_DIR)/kernel_entry.o: kernel_entry.asm
 	$(ASM) $< -f elf -o $@
@@ -51,6 +55,10 @@ $(K_BUILD_DIR)/ata.o: drivers/disk/ata/ata.c drivers/disk/ata/ata.h
 $(K_BUILD_DIR)/keyboard.o: drivers/keyboard/keyboard.c drivers/keyboard/keyboard.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -mgeneral-regs-only -c $< -o $@
 
+# ----------- TIMER -----------
+$(K_BUILD_DIR)/timer.o: drivers/timer/timer.c drivers/timer/timer.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -mgeneral-regs-only -c $< -o $@
+
 # ------------ CURSOR ------------
 $(K_BUILD_DIR)/cursor.o: drivers/screen/cursor/cursor.c drivers/screen/cursor/cursor.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
@@ -71,10 +79,13 @@ $(K_BUILD_DIR)/string.o: stdlibs/string.c stdlibs/string.h
 $(K_BUILD_DIR)/stdlib.o: stdlibs/stdlib.c stdlibs/stdlib.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
 
+# ------------ PONG ------------
+$(K_BUILD_DIR)/pong.o: pong/pong.c pong/pong.h
+	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
+
 # ------------ FAT32 -------------
 $(K_BUILD_DIR)/fat32.o: drivers/disk/fat32/fat32.c drivers/disk/fat32/fat32.h
 	$(TARGET_CC) $(TARGET_CFLGAS) -c $< -o $@
-
 
 
 pre-build:
