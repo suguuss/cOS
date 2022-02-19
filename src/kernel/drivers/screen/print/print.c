@@ -129,9 +129,9 @@ void k_cclear(fb_color_t bg_color)
 	set_font_color(fore, back);
 }
 
-void k_print_number(int number)
+void k_print_number(int32_t number)
 {
-	char buffer[10];
+	char buffer[15];
 	itoa(number, buffer);
 	k_print(buffer);
 }
