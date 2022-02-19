@@ -13,6 +13,8 @@
 #include "interrupts/interrupts.h"
 #include "stdlibs/stdlib.h"
 #include "stdlibs/string.h"
+#include "drivers/keyboard/keyboard.h"
+#include "drivers/timer/timer.h"
 
 #include <stdint.h>
 
@@ -54,10 +56,12 @@ void init_kernel()
 
 	// idt setup
 	init_idt();
+	// Disable ALL Interrupts
+	port_byte_out(0x21, 0xFF);
 	// Enable keyboard interupts
 	init_keyboard();
+	// Init timer and enable timer interrupt
+	init_timer(20);
 	// Enable interrupts
 	asm volatile("sti");
-	// Init timer
-	init_timer(20);
 }

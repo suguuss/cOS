@@ -32,9 +32,9 @@ __attribute__((interrupt)) void keyboard_callback(void* a)
 	if ((scancode & 0x80) == 0) // Pressed
 	{
 		g_key_pressed[scancode] = PRESSED;
-		// k_put_char(keyboard_map[scancode]);
 
-		// k_print_number(scancode);
+		// Enable if you want to print the key pressed
+		k_put_char(keyboard_map[scancode]);
 	}
 	else // Released
 	{
@@ -56,8 +56,8 @@ void init_keyboard()
 	// the interrupt is DISABLED, if the bit is set to 0 the interrupt 
 	// is ENABLED
 
-	// 0 = DISABLE
-	// 1 = ENABLE
+	// 1 = DISABLE
+	// 0 = ENABLE
 
 	// 00000000
 	// |||||||+-- IRQ 0
