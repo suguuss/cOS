@@ -39,7 +39,7 @@
 
 ### :minidisc: Bootloader
 #### Legacy booting
-The bios loads the first sector in the bottable device and look for the magic number (0xAA55, chosen number to represent a bootable signature). If the number is found, the bios jumps to the first instructions in the sector.
+The bios loads the first sector of the bottable device and look for the magic number (0xAA55, chosen number to represent a bootable signature). If the number is found, the bios jumps to the first instructions in the sector.
 
 #### :floppy_disk: FAT32
 #### :dvd: Reading sectors from the 'disk'
@@ -109,7 +109,6 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
 │   └── TODO.md
 ├── LICENSE
 ├── Makefile
-├── qemu.log
 ├── README.md
 ├── scripts
 │   ├── setup-gcc-arch.sh
@@ -121,9 +120,12 @@ To build the cross compiler, you can use a script inside the `scripts` folder. T
     └── kernel
         ├── drivers
         │   ├── disk
-        │   │   └── ata
-        │   │       ├── ata.c
-        │   │       └── ata.h
+        │   │   ├── ata
+        │   │   │   ├── ata.c
+        │   │   │   └── ata.h
+        │   │   └── fat32
+        │   │       ├── fat32.c
+        │   │       └── fat32.h
         │   ├── keyboard
         │   │   ├── ch-fr_keymap.h
         │   │   ├── keyboard.c

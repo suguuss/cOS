@@ -4,6 +4,7 @@
  * @version 0.1
  * @date 02-02-2022
  */
+// ! ---------------- INCLUDES  -----------------
 
 #include "drivers/screen/color/color.h"
 #include "drivers/screen/print/print.h"
@@ -15,11 +16,38 @@
 
 #include <stdint.h>
 
+// ! --------------- GLOBAL VAR  ----------------
+
+extern heap_t heap;
+extern block_metadata_t *meta_head;
+
+// ! --------------- PROTOTYPES  ----------------
+
+void init_kernel();
+
+
+
 extern int main()
 {
-	extern heap_t heap;
-	extern block_metadata_t *meta_head;
+	init_kernel();
 
+	uint8_t sector[512];
+
+	BootSector bs = fat32_parse_bootsector();
+	ata_read_sector(bs.RootDirSector, 1, sector);
+	FileEntry fe = fat32_parse_fileentry(sector, 32);
+	
+	k_print(fe.Name);
+
+	return 0;
+}
+
+
+
+
+void init_kernel()
+{
+	// ! PUT HERE EVERYTHING THAT NEED TO BE DONE TO SETUP THE KERNEL
 	// Init the Heap
 	heap = init_heap();
 
@@ -33,7 +61,4 @@ extern int main()
 	port_byte_out(0x21, 0xFD);
 	// Enable interrupts
 	asm volatile("sti");
-
-	return 0;
 }
-
