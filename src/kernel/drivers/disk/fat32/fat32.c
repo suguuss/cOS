@@ -9,6 +9,7 @@
 #include "../ata/ata.h"
 #include "../../../stdlibs/string.h"
 #include "../../../stdlibs/stdlib.h"
+#include "../../screen/print/print.h"
 
 /**
  * @brief Change the endiannes of a value (16 bits)
@@ -53,15 +54,15 @@ BootSector fat32_parse_bootsector()
 /**
  * @brief Parse a file entry and return a struct with the infos
  * @param uint8_t* Pointer to the sector of the disk where the entry is
- * @param uint16_t* offset of the entry from the begining of the sector (must be multiple of 32)
+ * @param uint16_t offset of the entry from the begining of the sector (must be multiple of 32)
  * @return BootSector information
  */
-FileEntry  fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
+FileEntry fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 {
 	FileEntry tmpEntry;
 
 	PARSE_INFO_CHAR(tmpEntry, Name,         sector, NAME_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, Attr,         sector, ATTR_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, Attr, sector, ATTR_OFFSET + offset)
 	PARSE_INFO_CHAR(tmpEntry, CrtTimeTenth, sector, CRTTIMETENTH_OFFSET + offset)
 	PARSE_INFO_INT (tmpEntry, CrtTime,      sector, CRTTIME_OFFSET + offset)
 	PARSE_INFO_INT (tmpEntry, CrtDate,      sector, CRTDATE_OFFSET + offset)
@@ -71,4 +72,6 @@ FileEntry  fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 	PARSE_INFO_INT (tmpEntry, WrtDate,      sector, WRTDATE_OFFSET + offset)
 	PARSE_INFO_INT (tmpEntry, FstClusLO,    sector, FSTCLUSLO_OFFSET + offset)
 	PARSE_INFO_LONG(tmpEntry, fileSize,     sector, FILESIZE_OFFSET + offset)
+
+	return tmpEntry;
 }
