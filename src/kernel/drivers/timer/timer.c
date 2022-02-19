@@ -58,23 +58,12 @@ void init_timer(uint32_t freq)
 	// Enable the IRQ0
 	port_byte_out(0x21, port_byte_in(0x21) & ~0x01);
 
-	// Each bit represent an interruption, if the bit is set to 1, 
-	// the interrupt is DISABLED, if the bit is set to 0 the interrupt 
+	// Each bit represent an interruption, if the bit is set to 1,
+	// the interrupt is DISABLED, if the bit is set to 0 the interrupt
 	// is ENABLED
 
 	// 0 = DISABLE
 	// 1 = ENABLE
-
-	// 00000000
-	// |||||||+-- IRQ 0
-	// ||||||+--- IRQ 1
-	// |||||+---- IRQ 2
-	// ||||+----- IRQ 3
-	// |||+------ IRQ 4
-	// ||+------- IRQ 5
-	// |+-------- IRQ 6
-	// +--------- IRQ 7
-
 
 	// ------------- PIT - Programmable Interval Timer -------------
 	// The idea is to trigger a callback at a Given period
@@ -87,11 +76,11 @@ void init_timer(uint32_t freq)
 	uint32_t div = 1193180 / freq;
 
 	// https://wiki.osdev.org/Programmable_Interval_Timer#I.2FO_Ports
-	// 0x36 - 0011 0110
-	// 7-6 CHANNEL 0
-	// 4-5 ACESS MODE LOW AND HIGH BYTE - SENDING DATA TO THE CHANNEL IN TWO GOES
-	// 1-3 OPERATION MODE 3 - SQUARE WAVE GENERATOR
-	// 0   BINARY MODE / BCD MODE
+	// 00110110 - 0x36
+	// │││││││└── BINARY MODE / BCD MODE
+	// ││││└└└─── OPERATION MODE 3 - SQUARE WAVE GENERATOR
+	// ││└└────── ACESS MODE LOW AND HIGH BYTE - SENDING DATA TO THE CHANNEL IN TWO GOES
+	// └└──────── CHANNEL 0
 	port_byte_out(TIMER_COMMAND, 0x36);
 	port_byte_out(TIMER_CHAN_0_DIV, (uint8_t)(div & 0xFF));		   // LOW BYTE
 	port_byte_out(TIMER_CHAN_0_DIV, (uint8_t)((div >> 8) & 0xFF)); // HIGH BYTE
