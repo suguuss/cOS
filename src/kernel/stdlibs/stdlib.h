@@ -34,6 +34,7 @@ heap_t init_heap();
 block_metadata_t *init_meta_block(uint32_t size, block_metadata_t *next_block, uint32_t meta_start);
 
 void *malloc(uint32_t size);
+void *realloc(void *ptr, uint32_t size);
 void free(void *ptr);
 void clean_heap();
 

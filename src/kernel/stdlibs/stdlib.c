@@ -143,6 +143,34 @@ void* malloc(uint32_t size)
 }
 
 /**
+ * @brief "Resize" the memory block pointed to by ptr
+ * @param void* pointer to the old memory block
+ * @param uint32_t size new size of the memory block
+ * @return void* Pointer to the resized memory
+ */
+void* realloc(void* ptr, uint32_t size)
+{
+	// Free the pointer
+	if (size == 0)
+	{
+		free(ptr);
+		return 0;
+	}
+
+	uint8_t *new_prt = malloc(size);
+	
+	// Check if malloc failed
+	if (new_prt == 0)
+	{
+		return 0;
+	}
+
+	memcpy(new_prt, ptr, size);
+	free(ptr);
+	return new_prt;
+}
+
+/**
  * @brief Free memory allocated by malloc from the heap
  * @param void* Pointer to the allocated memory
  */
