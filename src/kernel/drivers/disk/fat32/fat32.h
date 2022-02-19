@@ -54,7 +54,7 @@ typedef struct
 	uint32_t 	FATSz32;
 	uint32_t 	RootClus;
 	uint16_t  	RootDirSector;  // Not really in the boot sector
-} BootSector;
+} BootSector_t;
 
 
 // File entry descriptor (long name not supported yet)
@@ -71,7 +71,7 @@ typedef struct
 	uint16_t	LstAccDate;
 	uint16_t	WrtTime;
 	uint16_t	WrtDate;
-} FileEntry;
+} FileEntry_t;
  
 // ------------ PROTOTYPES ------------
 
@@ -87,6 +87,8 @@ typedef struct
 void swap_endian_int(uint16_t *val);
 void swap_endian_long(uint32_t *val);
 
-BootSector fat32_parse_bootsector();
-FileEntry  fat32_parse_fileentry(uint8_t *sector, uint16_t offset);
+BootSector_t fat32_parse_bootsector();
+FileEntry_t  fat32_parse_fileentry(uint8_t *sector, uint16_t offset);
+
+uint8_t clean_filename(uint8_t *filename);
 #endif

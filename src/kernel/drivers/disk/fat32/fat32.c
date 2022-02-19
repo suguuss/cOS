@@ -33,11 +33,11 @@ void swap_endian_long(uint32_t *val)
  * @brief Parse the boot sector and stores the most important
  * informations inside a BootSector struct
  * 
- * @return BootSector information
+ * @return BootSector_t information
  */
-BootSector fat32_parse_bootsector()
+BootSector_t fat32_parse_bootsector()
 {
-	BootSector bs;
+	BootSector_t bs;
 
 	bs.BytsPerSec 	= ata_read_word(0, BYTSPERSEC_OFFSET);
 	bs.SecPerClus 	= ata_read_byte(0, SECPERCLUS_OFFSET);
@@ -55,11 +55,11 @@ BootSector fat32_parse_bootsector()
  * @brief Parse a file entry and return a struct with the infos
  * @param uint8_t* Pointer to the sector of the disk where the entry is
  * @param uint16_t offset of the entry from the begining of the sector (must be multiple of 32)
- * @return BootSector information
+ * @return FileEntry_t File entry informations
  */
-FileEntry fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
+FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 {
-	FileEntry tmpEntry;
+	FileEntry_t tmpEntry;
 
 	PARSE_INFO_CHAR(tmpEntry, Name,         sector, NAME_OFFSET + offset)
 	PARSE_INFO_CHAR(tmpEntry, Attr, sector, ATTR_OFFSET + offset)
@@ -74,4 +74,46 @@ FileEntry fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 	PARSE_INFO_LONG(tmpEntry, fileSize,     sector, FILESIZE_OFFSET + offset)
 
 	return tmpEntry;
+}
+
+/**
+ * @brief Change the filename read on the disk to make it more readable
+ * TEXT    TXT --> text.txt
+ * @param uint8_t* Pointer to the sector of the disk where the entry is
+ * @return uint8_t Number of char in the cleaned filename
+ */
+uint8_t clean_filename(uint8_t* filename)
+{
+	uint8_t tmpChar;
+	uint8_t cleanCharCnt = 0;
+
+	// CLEAN THE NAME OF THE FILE
+	for (uint8_t i = 0; i < 11; i++)
+	{
+		// ADDS THE . ONCE WE'VE CLEANED THE NAME
+		if (i == 8)
+		{
+			filename[cleanCharCnt] = '.';
+			cleanCharCnt++;
+		}
+
+		tmpChar = filename[i];
+
+		// Make the char lowercase if it's a letter
+		if ((tmpChar >= 'A') && (tmpChar <= 'Z') )
+		{
+			tmpChar  += 0x20;
+		}
+
+		// If the char is not a space add it to the final filename
+		if (tmpChar != ' ')
+		{
+			filename[cleanCharCnt] = tmpChar;
+			cleanCharCnt++;
+		}
+	}
+
+	// Add the zero terminal
+	filename[cleanCharCnt] = 0;
+	return cleanCharCnt;
 }

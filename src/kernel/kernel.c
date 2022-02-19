@@ -16,11 +16,6 @@
 
 #include <stdint.h>
 
-// ! --------------- GLOBAL VAR  ----------------
-
-extern heap_t heap;
-extern block_metadata_t *meta_head;
-
 // ! --------------- PROTOTYPES  ----------------
 
 void init_kernel();
@@ -33,11 +28,14 @@ extern int main()
 
 	uint8_t sector[512];
 
-	BootSector bs = fat32_parse_bootsector();
+	BootSector_t bs = fat32_parse_bootsector();
 	ata_read_sector(bs.RootDirSector, 1, sector);
-	FileEntry fe = fat32_parse_fileentry(sector, 32);
+	FileEntry_t fe = fat32_parse_fileentry(sector, 32);
 	
 	k_print(fe.Name);
+	clean_filename(fe.Name);
+	k_print(fe.Name);
+	
 
 	return 0;
 }
@@ -47,6 +45,9 @@ extern int main()
 
 void init_kernel()
 {
+	extern heap_t heap;
+	extern block_metadata_t *meta_head;
+
 	// ! PUT HERE EVERYTHING THAT NEED TO BE DONE TO SETUP THE KERNEL
 	// Init the Heap
 	heap = init_heap();
