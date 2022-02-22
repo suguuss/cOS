@@ -31,8 +31,13 @@ extern int main()
 	BootSector_t bs = fat32_parse_bootsector();
 	FileList_t file_list = fat32_list_files(bs);
 
-	k_print(file_list.list[0].Name);
-	k_print_number(bs.root_clus);
+	for (int i = 0; i < file_list.size; i++)
+	{
+		clean_filename(file_list.list[i].Name);
+		k_print(file_list.list[i].Name);
+		k_print("\n");
+	}
+
 	return 0;
 }
 
