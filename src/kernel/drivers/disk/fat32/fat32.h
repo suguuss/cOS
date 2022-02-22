@@ -15,25 +15,25 @@
 
 // FAT32
 // BOOT SECTOR
-#define BYTSPERSEC_OFFSET		0x0B // 11 
-#define SECPERCLUS_OFFSET		0x0D // 13
-#define RSVDSECCNT_OFFSET		0x0E // 14
-#define NUMFATS_OFFSET			0x10 // 16
+#define byts_per_sec_OFFSET		0x0B // 11 
+#define sec_per_clus_OFFSET		0x0D // 13
+#define rsvd_sec_cnt_OFFSET		0x0E // 14
+#define num_FATs_OFFSET			0x10 // 16
 #define FATSz32_OFFSET			0x24 // 36
-#define ROOTCLUS_OFFSET			0x2C // 44
+#define root_clus_OFFSET			0x2C // 44
 
 // FILE ENTRY
 #define NAME_OFFSET				0x00 // 00
-#define ATTR_OFFSET				0x0B // 11
-#define CRTTIMETENTH_OFFSET		0x0D // 13
-#define CRTTIME_OFFSET			0x0E // 14
-#define CRTDATE_OFFSET			0x10 // 16
-#define LSTACCDATE_OFFSET		0x12 // 18
-#define FSTCLUSHI_OFFSET		0x14 // 20
-#define WRTTIME_OFFSET			0x16 // 22
-#define WRTDATE_OFFSET			0x18 // 24
-#define FSTCLUSLO_OFFSET		0x1A // 26
-#define FILESIZE_OFFSET			0x1C // 28
+#define attr_OFFSET				0x0B // 11
+#define crt_time_tenth_OFFSET		0x0D // 13
+#define crt_time_OFFSET			0x0E // 14
+#define crt_date_OFFSET			0x10 // 16
+#define lst_acc_date_OFFSET		0x12 // 18
+#define fst_clus_hi_OFFSET		0x14 // 20
+#define wrt_time_OFFSET			0x16 // 22
+#define wrt_date_OFFSET			0x18 // 24
+#define fst_clus_lo_OFFSET		0x1A // 26
+#define file_size_OFFSET			0x1C // 28
 
 
 // -------------- MACROS --------------
@@ -47,13 +47,13 @@
 // Most usefull info inside the boot sector
 typedef struct 
 {
-	uint16_t  	BytsPerSec;
-	uint8_t 	SecPerClus;
-	uint16_t  	RsvdSecCnt;
-	uint8_t 	NumFATs;
+	uint16_t  	byts_per_sec;
+	uint8_t 	sec_per_clus;
+	uint16_t  	rsvd_sec_cnt;
+	uint8_t 	num_FATs;
 	uint32_t 	FATSz32;
-	uint32_t 	RootClus;
-	uint16_t  	RootDirSector;  // Not really in the boot sector
+	uint32_t 	root_clus;
+	uint16_t  	root_dir_sector;  // Not really in the boot sector
 } BootSector_t;
 
 
@@ -61,18 +61,24 @@ typedef struct
 typedef struct
 {
 	char		Name[11];
-	uint16_t	FstClusHi;
-	uint16_t 	FstClusLO;
-	uint32_t	fileSize;
-	uint8_t		Attr;
-	uint8_t		CrtTimeTenth;
-	uint16_t	CrtTime;
-	uint16_t	CrtDate;
-	uint16_t	LstAccDate;
-	uint16_t	WrtTime;
-	uint16_t	WrtDate;
+	uint16_t	fst_clus_hi;
+	uint16_t 	fst_clus_lo;
+	uint32_t	file_size;
+	uint8_t		attr;
+	uint8_t		crt_time_tenth;
+	uint16_t	crt_time;
+	uint16_t	crt_date;
+	uint16_t	lst_acc_date;
+	uint16_t	wrt_time;
+	uint16_t	wrt_date;
 } FileEntry_t;
- 
+
+typedef struct
+{
+	uint32_t size;
+	FileEntry_t *list;
+} FileList_t;
+
 // ------------ PROTOTYPES ------------
 
 // !ABSTRACT FUNCTIONS in file "src/kernel/drivers/disk/ata/ata.c"

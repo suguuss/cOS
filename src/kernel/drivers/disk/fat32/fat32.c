@@ -41,16 +41,16 @@ BootSector_t fat32_parse_bootsector()
 {
 	BootSector_t bs;
 
-	bs.BytsPerSec 	= ata_read_word(0, BYTSPERSEC_OFFSET);
-	bs.SecPerClus 	= ata_read_byte(0, SECPERCLUS_OFFSET);
-	bs.RsvdSecCnt 	= ata_read_word(0, RSVDSECCNT_OFFSET);
-	bs.NumFATs 		= ata_read_byte(0, NUMFATS_OFFSET);
+	bs.byts_per_sec 	= ata_read_word(0, byts_per_sec_OFFSET);
+	bs.sec_per_clus 	= ata_read_byte(0, sec_per_clus_OFFSET);
+	bs.rsvd_sec_cnt 	= ata_read_word(0, rsvd_sec_cnt_OFFSET);
+	bs.num_FATs 		= ata_read_byte(0, num_FATs_OFFSET);
 	bs.FATSz32 		= ata_read_dword(0, FATSz32_OFFSET);
-	bs.RootClus 	= ata_read_dword(0, ROOTCLUS_OFFSET);
+	bs.root_clus 	= ata_read_dword(0, root_clus_OFFSET);
 
-	bs.RootDirSector = bs.RsvdSecCnt + (bs.NumFATs * bs.FATSz32);
+	bs.root_dir_sector = bs.rsvd_sec_cnt + (bs.num_FATs * bs.FATSz32);
 
-	g_current_dir_sector = bs.RootDirSector;
+	g_current_dir_sector = bs.root_dir_sector;
 
 	return bs;
 }
@@ -66,16 +66,16 @@ FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 	FileEntry_t tmpEntry;
 
 	PARSE_INFO_CHAR(tmpEntry, Name,         sector, NAME_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, Attr, sector, ATTR_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, CrtTimeTenth, sector, CRTTIMETENTH_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, CrtTime,      sector, CRTTIME_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, CrtDate,      sector, CRTDATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, LstAccDate,   sector, LSTACCDATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, FstClusHi,    sector, FSTCLUSHI_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, WrtTime,      sector, WRTTIME_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, WrtDate,      sector, WRTDATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, FstClusLO,    sector, FSTCLUSLO_OFFSET + offset)
-	PARSE_INFO_LONG(tmpEntry, fileSize,     sector, FILESIZE_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, attr, sector, attr_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, crt_time_tenth, sector, crt_time_tenth_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_time,      sector, crt_time_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_date,      sector, crt_date_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, lst_acc_date,   sector, lst_acc_date_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, fst_clus_hi,    sector, fst_clus_hi_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_time,      sector, wrt_time_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_date,      sector, wrt_date_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, fst_clus_lo,    sector, fst_clus_lo_OFFSET + offset)
+	PARSE_INFO_LONG(tmpEntry, file_size,     sector, file_size_OFFSET + offset)
 
 	return tmpEntry;
 }
@@ -133,25 +133,25 @@ FileEntry_t* fat32_list_files(BootSector_t bs)
 	uint16_t entry_offset = 0;
 	uint16_t file_count = 0;
 	// Allocate enough space for 16 files. Realloc if needed
-	FileEntry_t *file_list = malloc(sizeof(FileEntry_t) * (bs.BytsPerSec / 32));
+	FileEntry_t *file_list = malloc(sizeof(FileEntry_t) * (bs.byts_per_sec / 32));
 
 	// TODO : ADD MULTI CLUSTER SUPPORT
 
 	// Iterates all the sector inside a cluster
-	for (uint32_t sec = 0; sec < bs.SecPerClus; sec++)
+	for (uint32_t sec = 0; sec < bs.sec_per_clus; sec++)
 	{
 		ata_read_sector(g_current_dir_sector + sec, 1, sector);
 
 		// The first entry of the Root Directory is not a real entry and needs to be skipped
-		if (g_current_dir_sector + sec == bs.RootDirSector) {entry_offset = 32;}
+		if (g_current_dir_sector + sec == bs.root_dir_sector) {entry_offset = 32;}
 
-		for (entry_offset; entry_offset < bs.BytsPerSec; entry_offset+=32)
+		for (entry_offset; entry_offset < bs.byts_per_sec; entry_offset+=32)
 		{
 			file_list[file_count] = fat32_parse_fileentry(sector, entry_offset);
 
 			if (file_list[file_count].Name[0] == 0x00) 
 			{
-				file_list = realloc(file_list, sizeof(FileEntry_t) * file_count);
+				file_list = realloc(file_list, sizeof(FileEntry_t) * file_count + 1);
 				return file_list;
 			}
 			else if (file_list[file_count].Name[0] == 0xE5);	// Deleted file
