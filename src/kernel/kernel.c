@@ -29,10 +29,10 @@ extern int main()
 	uint8_t sector[512];
 
 	BootSector_t bs = fat32_parse_bootsector();
-	FileEntry_t *file_list = fat32_list_files(bs);
+	FileList_t file_list = fat32_list_files(bs);
 
-	k_print(file_list[0].Name);
-	k_print_number(bs.RootClus);
+	k_print(file_list.list[0].Name);
+	k_print_number(bs.root_clus);
 	return 0;
 }
 

@@ -127,13 +127,13 @@ uint8_t clean_filename(uint8_t* filename)
  * @param BootSector_t* Bootsector struct
  * @return FileEntry_t* List of file entries
  */
-FileEntry_t* fat32_list_files(BootSector_t bs)
+FileList_t fat32_list_files(BootSector_t bs)
 {
 	uint8_t *sector = malloc(512);
 	uint16_t entry_offset = 0;
 	uint16_t file_count = 0;
 	// Allocate enough space for 16 files. Realloc if needed
-	FileEntry_t *file_list = malloc(sizeof(FileEntry_t) * (bs.byts_per_sec / 32));
+	FileEntry_t *file_list_array = malloc(sizeof(FileEntry_t) * (bs.byts_per_sec / 32));
 
 	// TODO : ADD MULTI CLUSTER SUPPORT
 
@@ -147,15 +147,18 @@ FileEntry_t* fat32_list_files(BootSector_t bs)
 
 		for (entry_offset; entry_offset < bs.byts_per_sec; entry_offset+=32)
 		{
-			file_list[file_count] = fat32_parse_fileentry(sector, entry_offset);
+			file_list_array[file_count] = fat32_parse_fileentry(sector, entry_offset);
 
-			if (file_list[file_count].Name[0] == 0x00) 
+			if (file_list_array[file_count].Name[0] == 0x00) 
 			{
-				file_list = realloc(file_list, sizeof(FileEntry_t) * file_count + 1);
-				return file_list;
+				file_list_array = realloc(file_list_array, sizeof(FileEntry_t) * file_count);
+				FileList_t list;
+				list.list = file_list_array;
+				list.size = file_count;
+				return list;
 			}
-			else if (file_list[file_count].Name[0] == 0xE5);	// Deleted file
-			else if (file_list[file_count].Name[2] == 0x00);	// Long file entry not supported
+			else if (file_list_array[file_count].Name[0] == 0xE5);	// Deleted file
+			else if (file_list_array[file_count].Name[2] == 0x00);	// Long file entry not supported
 			else {file_count++;}								// Valid file
 		}
 	}
