@@ -67,17 +67,17 @@ FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 {
 	FileEntry_t tmpEntry;
 
-	PARSE_INFO_CHAR(tmpEntry, Name,         sector, NAME_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, attr, sector, ATTR_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, crt_time_tenth, sector, CRT_TIME_TENTH_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, crt_time,      sector, CRT_TIME_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, crt_date,      sector, CRT_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, lst_acc_date,   sector, LST_ACC_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_hi,    sector, FST_CLUS_HI_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, wrt_time,      sector, WRT_TIME_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, wrt_date,      sector, WRT_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_lo,    sector, FST_CLUS_LO_OFFSET + offset)
-	PARSE_INFO_LONG(tmpEntry, file_size,     sector, FILE_SIZE_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, Name,         	sector, NAME_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, attr,				sector, ATTR_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, crt_time_tenth,	sector, CRT_TIME_TENTH_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_time,			sector, CRT_TIME_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_date,			sector, CRT_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, lst_acc_date,		sector, LST_ACC_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, fst_clus_hi,		sector, FST_CLUS_HI_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_time,			sector, WRT_TIME_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_date,			sector, WRT_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, fst_clus_lo,		sector, FST_CLUS_LO_OFFSET + offset)
+	PARSE_INFO_LONG(tmpEntry, file_size,		sector, FILE_SIZE_OFFSET + offset)
 
 	return tmpEntry;
 }
@@ -85,10 +85,11 @@ FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 /**
  * @brief Change the filename read on the disk to make it more readable
  * TEXT    TXT --> text.txt
- * @param uint8_t* Pointer to the sector of the disk where the entry is
- * @return uint8_t Number of char in the cleaned filename
+ * @param char* Pointer to the original filename
+ * @param char* Pointer where the new clean filename will be written
+ * @return void
  */
-uint8_t clean_filename(uint8_t* filename)
+void clean_filename(char* filename, char* cleaned_filename)
 {
 	uint8_t tmpChar;
 	uint8_t cleanCharCnt = 0;
@@ -99,7 +100,7 @@ uint8_t clean_filename(uint8_t* filename)
 		// ADDS THE . ONCE WE'VE CLEANED THE NAME
 		if (i == 8)
 		{
-			filename[cleanCharCnt] = '.';
+			cleaned_filename[cleanCharCnt] = '.';
 			cleanCharCnt++;
 		}
 
@@ -114,14 +115,13 @@ uint8_t clean_filename(uint8_t* filename)
 		// If the char is not a space add it to the final filename
 		if (tmpChar != ' ')
 		{
-			filename[cleanCharCnt] = tmpChar;
+			cleaned_filename[cleanCharCnt] = tmpChar;
 			cleanCharCnt++;
 		}
 	}
 
 	// Add the zero terminal
-	filename[cleanCharCnt] = 0;
-	return cleanCharCnt;
+	cleaned_filename[cleanCharCnt] = 0;
 }
 
 /**
@@ -164,7 +164,11 @@ FileList_t fat32_list_files(BootSector_t bs)
 				}
 				else if (file_list_array[file_count].Name[0] == 0xE5);	// Deleted file
 				else if (file_list_array[file_count].Name[2] == 0x00);	// Long file entry not supported
-				else {file_count++;}									// Valid file
+				else // Valid file
+				{
+					clean_filename(file_list_array[file_count].Name, file_list_array[file_count].clean_name);
+					file_count++;
+				}
 			}
 		}
 		
@@ -199,4 +203,17 @@ uint32_t fat32_get_next_cluster_value(BootSector_t bs)
 {
 	uint32_t fat_offset = g_current_cluster_value * 4;
 	return FAT_MASK & ata_read_dword(bs.rsvd_sec_cnt + (fat_offset / bs.byts_per_sec), fat_offset % bs.byts_per_sec);
+}
+
+FileCursor_t fat32_openfile(BootSector_t bs, char* filename)
+{
+	// TODO: CHANGE DIRECTORY IF THE FILENAME IS A PATH, ONCE IT'S SUPPORTED
+
+	FileList_t flist = fat32_list_files(bs);
+
+	for (uint16_t i = 0; i < flist.size; i++)
+	{
+		// if (flist.list[i])
+	}
+	
 }

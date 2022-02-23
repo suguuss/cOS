@@ -36,8 +36,8 @@ extern int main()
 
 	for (int i = 0; i < file_list.size; i++)
 	{
-		clean_filename(file_list.list[i].Name);
-		k_print(file_list.list[i].Name);
+		// clean_filename(file_list.list[i].Name, )
+		k_print(file_list.list[i].clean_name);
 		k_print("\n");
 	}
 
