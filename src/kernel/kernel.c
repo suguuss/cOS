@@ -29,17 +29,30 @@ extern int main()
 {
 	init_kernel();
 
-	uint8_t sector[512];
-
 	BootSector_t bs = fat32_parse_bootsector();
-	FileList_t file_list = fat32_list_files(bs);
+	// FileList_t file_list = fat32_list_files(bs);
 
-	for (int i = 0; i < file_list.size; i++)
-	{
-		// clean_filename(file_list.list[i].Name, )
-		k_print(file_list.list[i].clean_name);
-		k_print("\n");
-	}
+	// for (int i = 0; i < file_list.size; i++)
+	// {
+	// 	k_print(file_list.list[i].clean_name);
+	// 	k_print("\n");
+	// }
+
+	// file_list = fat32_list_files(bs);
+
+	// for (int i = 0; i < file_list.size; i++)
+	// {
+	// 	k_print(file_list.list[i].clean_name);
+	// 	k_print("\n");
+	// }
+
+	FilePointer_t fp = fat32_openfile(bs, "test10.txt");
+	k_print_number(fp.fileSize);
+	k_print("\n");
+	k_print_number(fp.baseCluster);
+	k_print("\n");
+	k_print_number(fp.Offset);
+	k_print("\n");
 
 	return 0;
 }

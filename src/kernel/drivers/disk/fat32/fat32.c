@@ -46,8 +46,8 @@ BootSector_t fat32_parse_bootsector()
 	bs.sec_per_clus 	= ata_read_byte(0, SEC_PER_CLUS_OFFSET);
 	bs.rsvd_sec_cnt 	= ata_read_word(0, RSVD_SEC_CNT_OFFSET);
 	bs.num_FATs 		= ata_read_byte(0, NUM_FATS_OFFSET);
-	bs.FATSz32 		= ata_read_dword(0, FATSZ32_OFFSET);
-	bs.root_clus 	= ata_read_dword(0, ROOT_CLUS_OFFSET);
+	bs.FATSz32 			= ata_read_dword(0, FATSZ32_OFFSET);
+	bs.root_clus 		= ata_read_dword(0, ROOT_CLUS_OFFSET);
 
 	bs.root_dir_sector = bs.rsvd_sec_cnt + (bs.num_FATs * bs.FATSz32);
 
@@ -66,6 +66,12 @@ BootSector_t fat32_parse_bootsector()
 FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 {
 	FileEntry_t tmpEntry;
+	uint16_t fst_clus_hi;
+	uint16_t fst_clus_lo;
+
+	memcpy(&fst_clus_hi, sector + FST_CLUS_HI_OFFSET + offset, 2);
+	memcpy(&fst_clus_lo, sector + FST_CLUS_LO_OFFSET + offset, 2);
+	tmpEntry.fst_clus = fst_clus_hi << 16 | fst_clus_lo;
 
 	PARSE_INFO_CHAR(tmpEntry, Name,         	sector, NAME_OFFSET + offset)
 	PARSE_INFO_CHAR(tmpEntry, attr,				sector, ATTR_OFFSET + offset)
@@ -73,10 +79,8 @@ FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 	PARSE_INFO_INT (tmpEntry, crt_time,			sector, CRT_TIME_OFFSET + offset)
 	PARSE_INFO_INT (tmpEntry, crt_date,			sector, CRT_DATE_OFFSET + offset)
 	PARSE_INFO_INT (tmpEntry, lst_acc_date,		sector, LST_ACC_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_hi,		sector, FST_CLUS_HI_OFFSET + offset)
 	PARSE_INFO_INT (tmpEntry, wrt_time,			sector, WRT_TIME_OFFSET + offset)
 	PARSE_INFO_INT (tmpEntry, wrt_date,			sector, WRT_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_lo,		sector, FST_CLUS_LO_OFFSET + offset)
 	PARSE_INFO_LONG(tmpEntry, file_size,		sector, FILE_SIZE_OFFSET + offset)
 
 	return tmpEntry;
@@ -180,7 +184,7 @@ FileList_t fat32_list_files(BootSector_t bs)
 		{
 			g_current_cluster_value = next_cluster;
 			// ! MIGHT WANT TO CHANGE THAT
-			g_current_dir_sector = bs.root_dir_sector + ((g_current_cluster_value - 2) * bs.sec_per_clus);
+			g_current_dir_sector = fat32_get_sector_from_cluster(bs, g_current_cluster_value);
 		}
 
 	} while (next_cluster < FAT_EOC);
@@ -205,15 +209,59 @@ uint32_t fat32_get_next_cluster_value(BootSector_t bs)
 	return FAT_MASK & ata_read_dword(bs.rsvd_sec_cnt + (fat_offset / bs.byts_per_sec), fat_offset % bs.byts_per_sec);
 }
 
-FileCursor_t fat32_openfile(BootSector_t bs, char* filename)
+uint32_t fat32_get_sector_from_cluster(BootSector_t bs, uint32_t cluster)
+{
+	return bs.root_dir_sector + ((cluster - 2) * bs.sec_per_clus);
+}
+
+FilePointer_t fat32_openfile(BootSector_t bs, char* filename)
 {
 	// TODO: CHANGE DIRECTORY IF THE FILENAME IS A PATH, ONCE IT'S SUPPORTED
 
 	FileList_t flist = fat32_list_files(bs);
+	FilePointer_t f;
 
 	for (uint16_t i = 0; i < flist.size; i++)
 	{
-		// if (flist.list[i])
+		k_print(flist.list[i].clean_name);
+		k_print("\n");
+		if (strcmp(flist.list[i].clean_name, filename) == 0)
+		{
+			f.baseCluster 		= flist.list[i].fst_clus;
+			f.currentCluster 	= flist.list[i].fst_clus;
+			f.currentSector 	= fat32_get_sector_from_cluster(bs, f.baseCluster);
+			f.fileSize 			= flist.list[i].file_size;
+			f.Offset 			= 0;
+
+			return f;
+		}
 	}
-	
+
+	memset(&f, 0, sizeof(FilePointer_t)); // Returns a struct full of 0
+	return f;
+}
+
+void fat32_dump_bs(BootSector_t bs)
+{
+	k_print("byts_per_sec		");
+	k_print_number(bs.byts_per_sec);
+	k_print("\n");
+	k_print("sec_per_clus		");
+	k_print_number(bs.sec_per_clus);
+	k_print("\n");
+	k_print("rsvd_sec_cnt		");
+	k_print_number(bs.rsvd_sec_cnt);
+	k_print("\n");
+	k_print("num_FATs			");
+	k_print_number(bs.num_FATs);
+	k_print("\n");
+	k_print("FATSz32			");
+	k_print_number(bs.FATSz32);
+	k_print("\n");
+	k_print("root_clus			");
+	k_print_number(bs.root_clus);
+	k_print("\n");
+	k_print("root_dir_sector	");
+	k_print_number(bs.root_dir_sector);
+	k_print("\n");
 }

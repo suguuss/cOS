@@ -31,7 +31,7 @@ os: $(BUILD_DIR)/os.bin
 $(BUILD_DIR)/os.bin: pre-build bootloader kernel
 	@echo ------------ BUILDING IMAGE ------------
 	@dd if=/dev/zero of=$@ bs=512 count=4096 status=none
-	@mkfs.fat -I -F 32 -n boot $@ 2>/dev/null 1>/dev/null
+	@mkfs.fat -I -F 32 -R 50 -n boot $@ 2>/dev/null 1>/dev/null
 
 	@# --- ADD A FILE IN THE ROOT DIR (TEST PURPOSE ONLY) ---
 	@echo "Hello World!" > test.txt

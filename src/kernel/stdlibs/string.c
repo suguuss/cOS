@@ -66,15 +66,15 @@ int strlen(const char* str)
  */
 int strcmp(const char *str1, const char *str2)
 {
-	int tot = 0;
-	while (*str1 != 0)
+	while (*str1)
 	{
 		// Loops through all the chars and adds the diff
 		// between them to the tot variable.
-		tot += *str1 - *str2;
+
+		if (*str1 != *str2){break;}
 		str1++;
 		str2++;
 	}
 
-	return tot;
+	return *str1 - *str2;
 }
