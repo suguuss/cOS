@@ -81,6 +81,7 @@ A collection of utilities for manipulating MS-DOS filesystems.
 ```
 sudo pacman -S make nasm qemu mtools
 ```
+> :warning: On manjaro, there is a bug in mcopy (part of mtools). It is recommended to build an older version yourself (mtools-4.0.31.tar.gz). from https://ftp.gnu.org/gnu/mtools/
 
 ### Install on Ubuntu
 ```
