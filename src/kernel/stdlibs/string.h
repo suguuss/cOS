@@ -10,7 +10,10 @@
 
 #include <stdint.h>
 
-void memset(void* addr, uint8_t v, uint32_t n);
-void memcpy(void* dest, const void* src, uint32_t size);
-int	 strlen(const char* str);
+void memset(void *addr, uint8_t v, uint32_t n);
+void memcpy(void *dest, const void *src, uint32_t size);
+int strlen(const char *str);
+
+char **split(char *str, const char delim)
+
 #endif

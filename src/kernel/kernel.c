@@ -24,26 +24,25 @@
 // ! --------------- PROTOTYPES  ----------------
 void init_kernel();
 
-
 extern int main()
 {
 	init_kernel();
 
-	uint8_t sector[512];
+	// uint8_t sector[512];
 
-	BootSector_t bs = fat32_parse_bootsector();
-	FileList_t file_list = fat32_list_files(bs);
+	// BootSector_t bs = fat32_parse_bootsector();
+	// FileList_t file_list = fat32_list_files(bs);
 
-	for (int i = 0; i < file_list.size; i++)
-	{
-		clean_filename(file_list.list[i].Name);
-		k_print(file_list.list[i].Name);
-		k_print("\n");
-	}
+	// for (int i = 0; i < file_list.size; i++)
+	//{
+	//	clean_filename(file_list.list[i].Name);
+	//	k_print(file_list.list[i].Name);
+	//	k_print("\n");
+	// }
+	k_print("Test");
 
 	return 0;
 }
-
 
 void init_kernel()
 {
@@ -61,7 +60,7 @@ void init_kernel()
 	// Enable interrupts
 	asm volatile("sti");
 
-	#if DISPLAY_LOGO == 1
+#if DISPLAY_LOGO == 1
 	k_print(
 		"            /$$$$$$   /$$$$$$		\n"
 		"           /$$__  $$ /$$__  $$		\n"
@@ -72,5 +71,5 @@ void init_kernel()
 		"|  $$$$$$$|  $$$$$$/|  $$$$$$/		\n"
 		" \\_______/ \\______/  \\______/	\n");
 
-	#endif
+#endif
 }
