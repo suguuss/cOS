@@ -37,5 +37,6 @@ void *malloc(uint32_t size);
 void *realloc(void *ptr, uint32_t size);
 void free(void *ptr);
 void clean_heap();
+void init_malloc();
 
 #endif //_STDLIB_H_

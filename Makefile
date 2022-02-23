@@ -38,6 +38,8 @@ $(BUILD_DIR)/os.bin: pre-build bootloader kernel
 	@mcopy -i $@ test.txt ::test.txt
 	@mcopy -i $@ test.txt ::coucou.txt
 	@mcopy -i $@ test.txt ::abi.txt
+	@mcopy -i $@ test.txt ::abi2.txt
+	@mcopy -i $@ test.txt ::abi3.txt
 	@mcopy -i $@ test.txt ::test2.txt
 	@rm test.txt
 	@# --- ADD A FILE IN THE ROOT DIR (TEST PURPOSE ONLY) ---

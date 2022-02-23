@@ -44,17 +44,8 @@ extern int main()
 
 void init_kernel()
 {
-	extern heap_t			 heap;
-	extern block_metadata_t* meta_head;
-
 	// ! HERE, PUT EVERYTHING THAT NEEDS TO BE DONE TO SETUP THE KERNEL
-	// Init the Heap
-	heap = init_heap();
-
-	// Init first metadata block
-	// To get the size of the first data block,
-	// You need to get the whole heap size (end - start) minus the size of the first metadata block
-	meta_head = init_meta_block((uint32_t)heap.end - (uint32_t)heap.start - sizeof(block_metadata_t), 0, (uint32_t)heap.start);
+	init_malloc();
 
 	// idt setup
 	init_idt();
