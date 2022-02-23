@@ -74,6 +74,16 @@ void k_cprint(char* text, fb_color_t fg_color, fb_color_t bg_color)
 			// Set the cursor to the next line
 			cursor_pos = ((cursor_pos / (MAX_COLS) + 1) * MAX_COLS);
 		}
+		else if (*text == '\t')
+		{
+			for (uint8_t i = 0; i < TAB_SIZE; i++)
+			{
+				// Displays the correct number of spaces for 1 tab
+				buff[cursor_pos] = GET_COLORED_CHAR(' ', GET_FONT_COLOR(fg_color, bg_color));
+				cursor_pos++;
+			}
+			text++;
+		}
 		else
 		{
 			// Create a char with a given color and pass it to the 16 bits buffer

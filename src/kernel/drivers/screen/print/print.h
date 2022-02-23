@@ -17,7 +17,7 @@
 #define VIDEO_ADDR 0xB8000 // https://wiki.osdev.org/Memory_Map_(x86)
 #define MAX_ROWS   25
 #define MAX_COLS   80
-
+#define TAB_SIZE	4
 
 // ----------------------------------------------
 // ------------------- PRINT --------------------
