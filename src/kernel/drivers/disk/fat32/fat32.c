@@ -134,36 +134,59 @@ FileList_t fat32_list_files(BootSector_t bs)
 	uint8_t *sector = malloc(512);
 	uint16_t entry_offset = 0;
 	uint16_t file_count = 0;
+	uint32_t next_cluster;
+
 	// Allocate enough space for 16 files. Realloc if needed
-	FileEntry_t *file_list_array = malloc(sizeof(FileEntry_t) * (bs.byts_per_sec / 32));
+	FileEntry_t *file_list_array = malloc(sizeof(FileEntry_t) * (bs.byts_per_sec / 32) * 2);
 
-	// TODO : ADD MULTI CLUSTER SUPPORT
-
-	// Iterates all the sector inside a cluster
-	for (uint32_t sec = 0; sec < bs.sec_per_clus; sec++)
+	do
 	{
-		ata_read_sector(g_current_dir_sector + sec, 1, sector);
-
-		// The first entry of the Root Directory is not a real entry and needs to be skipped
-		if (g_current_dir_sector + sec == bs.root_dir_sector) {entry_offset = 32;}
-
-		for (entry_offset; entry_offset < bs.byts_per_sec; entry_offset+=32)
+		entry_offset = 0;
+		// Iterates all the sector inside a cluster
+		for (uint32_t sec = 0; sec < bs.sec_per_clus; sec++)
 		{
-			file_list_array[file_count] = fat32_parse_fileentry(sector, entry_offset);
+			ata_read_sector(g_current_dir_sector + sec, 1, sector);
 
-			if (file_list_array[file_count].Name[0] == 0x00) 
+			// The first entry of the Root Directory is not a real entry and needs to be skipped
+			if (g_current_dir_sector + sec == bs.root_dir_sector) {entry_offset = 32;}
+
+			for (entry_offset; entry_offset < bs.byts_per_sec; entry_offset+=32)
 			{
-				file_list_array = realloc(file_list_array, sizeof(FileEntry_t) * file_count);
-				FileList_t list;
-				list.list = file_list_array;
-				list.size = file_count;
-				return list;
+				file_list_array[file_count] = fat32_parse_fileentry(sector, entry_offset);
+
+				if (file_list_array[file_count].Name[0] == 0x00) 
+				{
+					file_list_array = realloc(file_list_array, sizeof(FileEntry_t) * file_count);
+					FileList_t list;
+					list.list = file_list_array;
+					list.size = file_count;
+					return list;
+				}
+				else if (file_list_array[file_count].Name[0] == 0xE5);	// Deleted file
+				else if (file_list_array[file_count].Name[2] == 0x00);	// Long file entry not supported
+				else {file_count++;}									// Valid file
 			}
-			else if (file_list_array[file_count].Name[0] == 0xE5);	// Deleted file
-			else if (file_list_array[file_count].Name[2] == 0x00);	// Long file entry not supported
-			else {file_count++;}									// Valid file
 		}
-	}
+		
+		// Check if we need to change cluster
+		next_cluster = fat32_get_next_cluster_value(bs);
+
+		if (next_cluster != FAT_EOC)
+		{
+			g_current_cluster_value = next_cluster;
+			// ! MIGHT WANT TO CHANGE THAT
+			g_current_dir_sector = bs.root_dir_sector + ((g_current_cluster_value - 2) * bs.sec_per_clus);
+		}
+
+	} while (next_cluster != FAT_EOC);
+
+
+	// Return the list of files
+	file_list_array = realloc(file_list_array, sizeof(FileEntry_t) * file_count);
+	FileList_t list;
+	list.list = file_list_array;
+	list.size = file_count;
+	return list;
 }
 
 /**

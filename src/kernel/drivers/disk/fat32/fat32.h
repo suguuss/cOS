@@ -35,7 +35,8 @@
 #define FST_CLUS_LO_OFFSET		0x1A // 26
 #define FILE_SIZE_OFFSET		0x1C // 28
 
-#define FAT_MASK 0xFFFFFFF0
+#define FAT_MASK 0x0FFFFFFF
+#define FAT_EOC  0x0FFFFFFF // End Of Cluster mark. Means it's the last cluster of the file
 
 // -------------- MACROS --------------
 #define PARSE_INFO_INT(structure, info, buffer, offset)  memcpy(&structure.info, buffer+offset, sizeof(structure.info)); swap_endian_int(&structure.info);

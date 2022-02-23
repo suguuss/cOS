@@ -18,6 +18,9 @@
 
 #include <stdint.h>
 
+// ! ----------------- DEFINES ------------------
+#define DISPLAY_LOGO 0
+
 // ! --------------- PROTOTYPES  ----------------
 void init_kernel();
 
@@ -38,10 +41,6 @@ extern int main()
 		k_print("\n");
 	}
 
-	k_print_number(bs.root_clus);
-	k_print("\n");
-	k_print_number(fat32_get_next_cluster_value(bs));
-
 	return 0;
 }
 
@@ -61,6 +60,8 @@ void init_kernel()
 	init_timer(20);
 	// Enable interrupts
 	asm volatile("sti");
+
+	#if DISPLAY_LOGO == 1
 	k_print(
 		"            /$$$$$$   /$$$$$$		\n"
 		"           /$$__  $$ /$$__  $$		\n"
@@ -70,4 +71,6 @@ void init_kernel()
 		"| $$      | $$  | $$ /$$  \\ $$	\n"
 		"|  $$$$$$$|  $$$$$$/|  $$$$$$/		\n"
 		" \\_______/ \\______/  \\______/	\n");
+
+	#endif
 }

@@ -35,12 +35,23 @@ $(BUILD_DIR)/os.bin: pre-build bootloader kernel
 
 	@# --- ADD A FILE IN THE ROOT DIR (TEST PURPOSE ONLY) ---
 	@echo "Hello World!" > test.txt
-	@mcopy -i $@ test.txt ::test.txt
-	@mcopy -i $@ test.txt ::coucou.txt
-	@mcopy -i $@ test.txt ::abi.txt
-	@mcopy -i $@ test.txt ::abi2.txt
-	@mcopy -i $@ test.txt ::abi3.txt
-	@mcopy -i $@ test.txt ::test2.txt
+	@mcopy -i $@ test.txt ::test00.txt
+	@mcopy -i $@ test.txt ::test01.txt
+	@mcopy -i $@ test.txt ::test02.txt
+	@mcopy -i $@ test.txt ::test03.txt
+	@mcopy -i $@ test.txt ::test04.txt
+	@mcopy -i $@ test.txt ::test05.txt
+	@mcopy -i $@ test.txt ::test06.txt
+	@mcopy -i $@ test.txt ::test07.txt
+	@mcopy -i $@ test.txt ::test08.txt
+	@mcopy -i $@ test.txt ::test09.txt
+	@mcopy -i $@ test.txt ::test10.txt
+	@mcopy -i $@ test.txt ::test11.txt
+	@mcopy -i $@ test.txt ::test12.txt
+	@mcopy -i $@ test.txt ::test13.txt
+	@mcopy -i $@ test.txt ::test14.txt
+	@mcopy -i $@ test.txt ::test15.txt
+	@mcopy -i $@ test.txt ::test16.txt
 	@rm test.txt
 	@# --- ADD A FILE IN THE ROOT DIR (TEST PURPOSE ONLY) ---
 
