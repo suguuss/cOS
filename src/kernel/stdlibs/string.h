@@ -13,4 +13,5 @@
 void memset(void* addr, uint8_t v, uint32_t n);
 void memcpy(void* dest, const void* src, uint32_t size);
 int	 strlen(const char* str);
+int  strcmp(const char *str1, const char *str2);
 #endif

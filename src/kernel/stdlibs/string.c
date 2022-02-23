@@ -52,3 +52,29 @@ int strlen(const char* str)
 	}
 	return i;
 }
+
+/**
+ * @brief compares the string pointed to, by str1 to the string pointed to by str2.
+ *
+ * @param const char *str1
+ * @param const char *str2
+ * @return int
+ * 
+ * - if Return value < 0 then it indicates str1 is less than str2.
+ * - if Return value > 0 then it indicates str2 is less than str1.
+ * - if Return value = 0 then it indicates str1 is equal to str2.
+ */
+int strcmp(const char *str1, const char *str2)
+{
+	int tot = 0;
+	while (*str1 != 0)
+	{
+		// Loops through all the chars and adds the diff
+		// between them to the tot variable.
+		tot += *str1 - *str2;
+		str1++;
+		str2++;
+	}
+
+	return tot;
+}
