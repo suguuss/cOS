@@ -171,14 +171,15 @@ FileList_t fat32_list_files(BootSector_t bs)
 		// Check if we need to change cluster
 		next_cluster = fat32_get_next_cluster_value(bs);
 
-		if (next_cluster != FAT_EOC)
+		// Change the current cluster
+		if (next_cluster < FAT_EOC)
 		{
 			g_current_cluster_value = next_cluster;
 			// ! MIGHT WANT TO CHANGE THAT
 			g_current_dir_sector = bs.root_dir_sector + ((g_current_cluster_value - 2) * bs.sec_per_clus);
 		}
 
-	} while (next_cluster != FAT_EOC);
+	} while (next_cluster < FAT_EOC);
 
 
 	// Return the list of files
