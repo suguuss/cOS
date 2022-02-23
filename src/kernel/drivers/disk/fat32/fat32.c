@@ -12,6 +12,7 @@
 #include "../../screen/print/print.h"
 
 uint32_t g_current_dir_sector = 0;
+uint32_t g_current_cluster_value = 0;
 
 /**
  * @brief Change the endiannes of a value (16 bits)
@@ -41,16 +42,17 @@ BootSector_t fat32_parse_bootsector()
 {
 	BootSector_t bs;
 
-	bs.byts_per_sec 	= ata_read_word(0, byts_per_sec_OFFSET);
-	bs.sec_per_clus 	= ata_read_byte(0, sec_per_clus_OFFSET);
-	bs.rsvd_sec_cnt 	= ata_read_word(0, rsvd_sec_cnt_OFFSET);
-	bs.num_FATs 		= ata_read_byte(0, num_FATs_OFFSET);
-	bs.FATSz32 		= ata_read_dword(0, FATSz32_OFFSET);
-	bs.root_clus 	= ata_read_dword(0, root_clus_OFFSET);
+	bs.byts_per_sec 	= ata_read_word(0, BYTS_PER_SEC_OFFSET);
+	bs.sec_per_clus 	= ata_read_byte(0, SEC_PER_CLUS_OFFSET);
+	bs.rsvd_sec_cnt 	= ata_read_word(0, RSVD_SEC_CNT_OFFSET);
+	bs.num_FATs 		= ata_read_byte(0, NUM_FATS_OFFSET);
+	bs.FATSz32 		= ata_read_dword(0, FATSZ32_OFFSET);
+	bs.root_clus 	= ata_read_dword(0, ROOT_CLUS_OFFSET);
 
 	bs.root_dir_sector = bs.rsvd_sec_cnt + (bs.num_FATs * bs.FATSz32);
 
 	g_current_dir_sector = bs.root_dir_sector;
+	g_current_cluster_value = bs.root_clus;
 
 	return bs;
 }
@@ -66,16 +68,16 @@ FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 	FileEntry_t tmpEntry;
 
 	PARSE_INFO_CHAR(tmpEntry, Name,         sector, NAME_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, attr, sector, attr_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, crt_time_tenth, sector, crt_time_tenth_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, crt_time,      sector, crt_time_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, crt_date,      sector, crt_date_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, lst_acc_date,   sector, lst_acc_date_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_hi,    sector, fst_clus_hi_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, wrt_time,      sector, wrt_time_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, wrt_date,      sector, wrt_date_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_lo,    sector, fst_clus_lo_OFFSET + offset)
-	PARSE_INFO_LONG(tmpEntry, file_size,     sector, file_size_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, attr, sector, ATTR_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, crt_time_tenth, sector, CRT_TIME_TENTH_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_time,      sector, CRT_TIME_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_date,      sector, CRT_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, lst_acc_date,   sector, LST_ACC_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, fst_clus_hi,    sector, FST_CLUS_HI_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_time,      sector, WRT_TIME_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_date,      sector, WRT_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, fst_clus_lo,    sector, FST_CLUS_LO_OFFSET + offset)
+	PARSE_INFO_LONG(tmpEntry, file_size,     sector, FILE_SIZE_OFFSET + offset)
 
 	return tmpEntry;
 }
@@ -159,7 +161,18 @@ FileList_t fat32_list_files(BootSector_t bs)
 			}
 			else if (file_list_array[file_count].Name[0] == 0xE5);	// Deleted file
 			else if (file_list_array[file_count].Name[2] == 0x00);	// Long file entry not supported
-			else {file_count++;}								// Valid file
+			else {file_count++;}									// Valid file
 		}
 	}
+}
+
+/**
+ * @brief Checks the FAT Table and returns the next cluster value (of g_current_cluster_value)
+ * @param BootSector_t bs
+ * @return uint32_t
+ */
+uint32_t fat32_get_next_cluster_value(BootSector_t bs)
+{
+	uint32_t fat_offset = g_current_cluster_value * 4;
+	return FAT_MASK & ata_read_dword(bs.rsvd_sec_cnt + (fat_offset / bs.byts_per_sec), fat_offset % bs.byts_per_sec);
 }

@@ -15,26 +15,27 @@
 
 // FAT32
 // BOOT SECTOR
-#define byts_per_sec_OFFSET		0x0B // 11 
-#define sec_per_clus_OFFSET		0x0D // 13
-#define rsvd_sec_cnt_OFFSET		0x0E // 14
-#define num_FATs_OFFSET			0x10 // 16
-#define FATSz32_OFFSET			0x24 // 36
-#define root_clus_OFFSET			0x2C // 44
+#define BYTS_PER_SEC_OFFSET		0x0B // 11 
+#define SEC_PER_CLUS_OFFSET		0x0D // 13
+#define RSVD_SEC_CNT_OFFSET		0x0E // 14
+#define NUM_FATS_OFFSET			0x10 // 16
+#define FATSZ32_OFFSET			0x24 // 36
+#define ROOT_CLUS_OFFSET		0x2C // 44
 
 // FILE ENTRY
 #define NAME_OFFSET				0x00 // 00
-#define attr_OFFSET				0x0B // 11
-#define crt_time_tenth_OFFSET		0x0D // 13
-#define crt_time_OFFSET			0x0E // 14
-#define crt_date_OFFSET			0x10 // 16
-#define lst_acc_date_OFFSET		0x12 // 18
-#define fst_clus_hi_OFFSET		0x14 // 20
-#define wrt_time_OFFSET			0x16 // 22
-#define wrt_date_OFFSET			0x18 // 24
-#define fst_clus_lo_OFFSET		0x1A // 26
-#define file_size_OFFSET			0x1C // 28
+#define ATTR_OFFSET				0x0B // 11
+#define CRT_TIME_TENTH_OFFSET	0x0D // 13
+#define CRT_TIME_OFFSET			0x0E // 14
+#define CRT_DATE_OFFSET			0x10 // 16
+#define LST_ACC_DATE_OFFSET		0x12 // 18
+#define FST_CLUS_HI_OFFSET		0x14 // 20
+#define WRT_TIME_OFFSET			0x16 // 22
+#define WRT_DATE_OFFSET			0x18 // 24
+#define FST_CLUS_LO_OFFSET		0x1A // 26
+#define FILE_SIZE_OFFSET		0x1C // 28
 
+#define FAT_MASK 0xFFFFFFF0
 
 // -------------- MACROS --------------
 #define PARSE_INFO_INT(structure, info, buffer, offset)  memcpy(&structure.info, buffer+offset, sizeof(structure.info)); swap_endian_int(&structure.info);
@@ -98,4 +99,6 @@ FileEntry_t  fat32_parse_fileentry(uint8_t *sector, uint16_t offset);
 
 uint8_t clean_filename(uint8_t *filename);
 FileList_t fat32_list_files(BootSector_t bs);
+
+uint32_t fat32_get_next_cluster_value(BootSector_t bs);
 #endif

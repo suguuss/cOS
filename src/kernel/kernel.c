@@ -38,6 +38,10 @@ extern int main()
 		k_print("\n");
 	}
 
+	k_print_number(bs.root_clus);
+	k_print("\n");
+	k_print_number(fat32_get_next_cluster_value(bs));
+
 	return 0;
 }
 
