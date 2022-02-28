@@ -89,6 +89,14 @@ typedef struct
 	FileEntry_t *list; 			// List of file entires in the directory
 } FileList_t;
 
+typedef struct
+{
+	uint32_t base_sector;
+	uint32_t current_sector;
+	uint32_t base_cluster;
+	uint32_t current_cluster;
+} CurrentDir_t;
+
 // ------------ PROTOTYPES ------------
 
 // !ABSTRACT FUNCTIONS in file "src/kernel/drivers/disk/ata/ata.c"

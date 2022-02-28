@@ -11,8 +11,7 @@
 #include "../../../stdlibs/stdlib.h"
 #include "../../screen/print/print.h"
 
-uint32_t g_current_dir_sector = 0;
-uint32_t g_current_cluster_value = 0;
+CurrentDir_t g_current_dir;
 
 /**
  * @brief Change the endiannes of a value (16 bits)
@@ -51,8 +50,11 @@ BootSector_t fat32_parse_bootsector()
 
 	bs.root_dir_sector = bs.rsvd_sec_cnt + (bs.num_FATs * bs.FATSz32);
 
-	g_current_dir_sector = bs.root_dir_sector;
-	g_current_cluster_value = bs.root_clus;
+	g_current_dir.base_sector    = bs.root_dir_sector;
+	g_current_dir.current_sector = bs.root_dir_sector;
+
+	g_current_dir.base_cluster = bs.root_clus;
+	g_current_dir.current_cluster = bs.root_clus;
 
 	return bs;
 }
@@ -143,16 +145,19 @@ FileList_t fat32_list_files(BootSector_t bs)
 	// Allocate enough space for 16 files. Realloc if needed
 	FileEntry_t *file_list_array = malloc(sizeof(FileEntry_t) * (bs.byts_per_sec / 32) * 2);
 
+	g_current_dir.current_sector = g_current_dir.base_sector;
+	g_current_dir.current_cluster = g_current_dir.base_cluster;
+
 	do
 	{
 		entry_offset = 0;
 		// Iterates all the sector inside a cluster
 		for (uint32_t sec = 0; sec < bs.sec_per_clus; sec++)
 		{
-			ata_read_sector(g_current_dir_sector + sec, 1, sector);
+			ata_read_sector(g_current_dir.current_sector + sec, 1, sector);
 
 			// The first entry of the Root Directory is not a real entry and needs to be skipped
-			if (g_current_dir_sector + sec == bs.root_dir_sector) {entry_offset = 32;}
+			if (g_current_dir.current_sector + sec == bs.root_dir_sector) {entry_offset = 32;}
 
 			for (entry_offset; entry_offset < bs.byts_per_sec; entry_offset+=32)
 			{
@@ -182,9 +187,9 @@ FileList_t fat32_list_files(BootSector_t bs)
 		// Change the current cluster
 		if (next_cluster < FAT_EOC)
 		{
-			g_current_cluster_value = next_cluster;
+			g_current_dir.current_cluster = next_cluster;
 			// ! MIGHT WANT TO CHANGE THAT
-			g_current_dir_sector = fat32_get_sector_from_cluster(bs, g_current_cluster_value);
+			g_current_dir.current_sector = fat32_get_sector_from_cluster(bs, g_current_dir.current_cluster);
 		}
 
 	} while (next_cluster < FAT_EOC);
@@ -199,13 +204,13 @@ FileList_t fat32_list_files(BootSector_t bs)
 }
 
 /**
- * @brief Checks the FAT Table and returns the next cluster value (of g_current_cluster_value)
+ * @brief Checks the FAT Table and returns the next cluster value (of g_current_dir.current_cluster)
  * @param BootSector_t bs
  * @return uint32_t
  */
 uint32_t fat32_get_next_cluster_value(BootSector_t bs)
 {
-	uint32_t fat_offset = g_current_cluster_value * 4;
+	uint32_t fat_offset = g_current_dir.current_cluster * 4;
 	return FAT_MASK & ata_read_dword(bs.rsvd_sec_cnt + (fat_offset / bs.byts_per_sec), fat_offset % bs.byts_per_sec);
 }
 
@@ -223,8 +228,6 @@ FilePointer_t fat32_openfile(BootSector_t bs, char* filename)
 
 	for (uint16_t i = 0; i < flist.size; i++)
 	{
-		k_print(flist.list[i].clean_name);
-		k_print("\n");
 		if (strcmp(flist.list[i].clean_name, filename) == 0)
 		{
 			f.baseCluster 		= flist.list[i].fst_clus;

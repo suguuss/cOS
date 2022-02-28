@@ -47,12 +47,7 @@ extern int main()
 	// }
 
 	FilePointer_t fp = fat32_openfile(bs, "test10.txt");
-	k_print_number(fp.fileSize);
-	k_print("\n");
-	k_print_number(fp.baseCluster);
-	k_print("\n");
-	k_print_number(fp.Offset);
-	k_print("\n");
+	fp = fat32_openfile(bs, "test08.txt");
 
 	return 0;
 }
