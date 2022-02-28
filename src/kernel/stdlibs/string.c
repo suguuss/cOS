@@ -61,25 +61,33 @@ int strlen(const char *str)
  * @param delim
  * @return char**
  */
-char **str_split(char *str, const char delim)
+splitted_tokens *str_split(const char *str, const char delim)
 {
-	int input_size = str_len(str);
-	char **out_tab = malloc(sizeof(char) * input_size / 2); // cannot be more
+	splitted_tokens *sk = malloc(sizeof(splitted_tokens));
+	int input_size = strlen(str);
+	sk->tokens = malloc(sizeof(char) * input_size / 2); // cannot be more
 	char buff_token[input_size];
-	char current_char;
-	int index;
+	int index = 0;
+	int index_tok = 0; // index of token being built
+	sk->nb_tok = 0;	   // index of token in tokens array
 
 	while (index < input_size) // While last char not reached
 	{
-		// Get the next token
-		for (int i = index; i < input_size; i++)
+		if (str[index] != delim)
 		{
-			current_char = str[index];
+			buff_token[index_tok] = str[index];
+		}
+		else
+		{
+			// PUT THE BUFFERED TOKEN IN FINAL ARRAY
+			int tok_size = strlen(buff_token);
+			sk->tokens[sk->nb_tok] = malloc(sizeof(char) * tok_size); // Allocate enough space
+			memcpy(sk->tokens[sk->nb_tok], buff_token, tok_size);
 
-			if (current_char == delim)
-			{
-				break;
-			}
+			// MANAGEMENT COUNTERS
+			index_tok = 0;
+			sk->nb_tok++;
 		}
 	}
+	return sk;
 }
