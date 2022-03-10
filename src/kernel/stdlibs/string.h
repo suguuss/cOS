@@ -10,18 +10,20 @@
 
 #include <stdint.h>
 
-void memset(void *addr, uint8_t v, uint32_t n);
-void memcpy(void *dest, const void *src, uint32_t size);
-int strlen(const char *str);
-
 // --------------------------------------------------
 // ---------------------- SPLIT ---------------------
 // --------------------------------------------------
 typedef struct
 {
-	int nb_tok;
-	char **tokens;
+	int	   nb_tok;
+	char** tokens;
 } splitted_tokens;
-splitted_tokens *str_split(const char *str, const char delim);
+splitted_tokens* str_split(const char* str, const char delim);
+
+
+void memset(void* addr, uint8_t v, uint32_t n);
+void memcpy(void* dest, const void* src, uint32_t size);
+int	 strlen(const char* str);
+
 
 #endif
