@@ -42,6 +42,7 @@ $(BUILD_DIR)/os.bin: pre-build bootloader kernel
 		echo "change the value \"KERNEL_RSVD_SEC_CNT\" in the Makefile and the value \"RSVD_SEC_CNT\" in \"bootsector.asm\""; \
 	fi
 
+
 	@# --- ADD A FILE IN THE ROOT DIR (TEST PURPOSE ONLY) ---
 	@echo "Hello World!" > test.txt
 	@mcopy -i $@ test.txt ::test00.txt

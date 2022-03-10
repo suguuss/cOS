@@ -24,7 +24,6 @@
 // ! --------------- PROTOTYPES  ----------------
 void init_kernel();
 
-
 extern int main()
 {
 	init_kernel();
@@ -52,7 +51,6 @@ extern int main()
 	return 0;
 }
 
-
 void init_kernel()
 {
 	// ! HERE, PUT EVERYTHING THAT NEEDS TO BE DONE TO SETUP THE KERNEL
@@ -69,7 +67,7 @@ void init_kernel()
 	// Enable interrupts
 	asm volatile("sti");
 
-	#if DISPLAY_LOGO == 1
+#if DISPLAY_LOGO == 1
 	k_print(
 		"            /$$$$$$   /$$$$$$		\n"
 		"           /$$__  $$ /$$__  $$		\n"
@@ -80,5 +78,5 @@ void init_kernel()
 		"|  $$$$$$$|  $$$$$$/|  $$$$$$/		\n"
 		" \\_______/ \\______/  \\______/	\n");
 
-	#endif
+#endif
 }

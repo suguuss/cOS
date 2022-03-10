@@ -10,8 +10,20 @@
 
 #include <stdint.h>
 
+// --------------------------------------------------
+// ---------------------- SPLIT ---------------------
+// --------------------------------------------------
+typedef struct
+{
+	int	   nb_tok;
+	char** tokens;
+} splitted_tokens;
+splitted_tokens* str_split(const char* str, const char delim);
+
+
 void memset(void* addr, uint8_t v, uint32_t n);
 void memcpy(void* dest, const void* src, uint32_t size);
 int	 strlen(const char* str);
 int  strcmp(const char *str1, const char *str2);
+
 #endif

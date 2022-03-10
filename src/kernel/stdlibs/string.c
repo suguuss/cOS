@@ -7,6 +7,9 @@
 
 #include "string.h"
 
+#include "../drivers/screen/print/print.h"
+#include "stdlib.h"
+
 /**
  * @brief copies a value v starting at address addr for n bytes
  *
@@ -54,6 +57,49 @@ int strlen(const char* str)
 }
 
 /**
+ * @brief Get every substrings separated by a delimiter
+ *
+ * @param str
+ * @param delim
+ * @return char**
+ */
+splitted_tokens* str_split(const char* str, const char delim)
+{
+	splitted_tokens* sk			= malloc(sizeof(splitted_tokens));
+	int				 input_size = strlen(str);
+	sk->tokens					= malloc(sizeof(char*) * input_size / 2); // cannot be more
+	char buff_token[input_size];
+	int	 index	   = 0;
+	int	 index_tok = 0; // index of token being built
+	sk->nb_tok	   = 0; // index of token in tokens array
+
+	while (index < input_size + 1) // While last char not reached
+	{
+		if ((str[index] != delim) && (str[index] != '\0'))
+		{
+			buff_token[index_tok++] = str[index];
+		}
+		else
+		{
+			// PUT THE BUFFERED TOKEN IN FINAL ARRAY
+			buff_token[index_tok] = '\0';
+			int tok_size		  = strlen(buff_token);
+			// k_print_number(tok_size);
+			// k_print(buff_token);
+			// k_print("\n");
+			sk->tokens[sk->nb_tok]			 = malloc(sizeof(char) * tok_size + 1); // Allocate enough space + 1 for \0
+			sk->tokens[sk->nb_tok][tok_size] = '\0';
+			memcpy(sk->tokens[sk->nb_tok], buff_token, tok_size);
+
+			// MANAGEMENT COUNTERS
+			index_tok = 0;
+			sk->nb_tok++;
+		}
+		index++;
+	}
+	return sk;
+}
+
  * @brief compares the string pointed to, by str1 to the string pointed to by str2.
  *
  * @param const char *str1
