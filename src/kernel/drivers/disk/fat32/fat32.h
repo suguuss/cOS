@@ -39,8 +39,8 @@
 #define FAT_EOC  0x0FFFFFF8 // End Of Cluster mark. Means it's the last cluster of the file
 
 // -------------- MACROS --------------
-#define PARSE_INFO_INT(structure, info, buffer, offset)  memcpy(&structure.info, buffer+offset, sizeof(structure.info)); swap_endian_int(&structure.info);
-#define PARSE_INFO_LONG(structure, info, buffer, offset) memcpy(&structure.info, buffer+offset, sizeof(structure.info)); swap_endian_long(&structure.info);
+#define PARSE_INFO_INT(structure, info, buffer, offset)  memcpy(&structure.info, buffer+offset, sizeof(structure.info)); //swap_endian_int(&structure.info);
+#define PARSE_INFO_LONG(structure, info, buffer, offset) memcpy(&structure.info, buffer+offset, sizeof(structure.info)); //swap_endian_long(&structure.info);
 #define PARSE_INFO_CHAR(structure, info, buffer, offset) memcpy(&structure.info, buffer+offset, sizeof(structure.info));
 
 
@@ -49,37 +49,53 @@
 // Most usefull info inside the boot sector
 typedef struct 
 {
-	uint16_t  	byts_per_sec;
-	uint8_t 	sec_per_clus;
-	uint16_t  	rsvd_sec_cnt;
-	uint8_t 	num_FATs;
-	uint32_t 	FATSz32;
-	uint32_t 	root_clus;
-	uint16_t  	root_dir_sector;  // Not really in the boot sector
+	uint16_t  	byts_per_sec;		// Number of bytes per sector
+	uint8_t 	sec_per_clus;		// Number of sector per clusters
+	uint16_t  	rsvd_sec_cnt;		// Number of sector in the reserved region
+	uint8_t 	num_FATs;			// Number of FAT Table
+	uint32_t 	FATSz32;			// Size of one FAT Table
+	uint32_t 	root_clus;			// Cluster number of the root dir
+	uint16_t  	root_dir_sector;	// Not really in the boot sector, sector of the root dir
 } BootSector_t;
-
 
 // File entry descriptor (long name not supported yet)
 typedef struct
 {
-	char		Name[11];
-	uint16_t	fst_clus_hi;
-	uint16_t 	fst_clus_lo;
-	uint32_t	file_size;
-	uint8_t		attr;
-	uint8_t		crt_time_tenth;
-	uint16_t	crt_time;
-	uint16_t	crt_date;
-	uint16_t	lst_acc_date;
-	uint16_t	wrt_time;
-	uint16_t	wrt_date;
+	char		Name[11];			// Name of the file on the disk
+	char 		clean_name[255];	// NOT IN THE FILE ENTRY
+	uint32_t 	fst_clus;			// First cluster of the file
+	uint32_t	file_size;			// Size of the file
+	uint8_t		attr;				// File attributes
+	uint8_t		crt_time_tenth;		// Millisecond stamp at file creation time.
+	uint16_t	crt_time;			// Time file was created
+	uint16_t	crt_date;			// Date file was created
+	uint16_t	lst_acc_date;		// Last access date
+	uint16_t	wrt_time;			// Time of last write
+	uint16_t	wrt_date;			// Date of last write
 } FileEntry_t;
+
+typedef struct 
+{
+   uint32_t baseCluster;		// Cluster where the beginning of the file is
+   uint32_t currentCluster;		// Cluster where we are curently
+   uint32_t Offset;				// Offset in byte from the start of the file
+   uint32_t fileSize;			// Size of the file
+   uint8_t  currentSector;		// Current sector inside the cluster
+} FilePointer_t;
 
 typedef struct
 {
-	uint32_t size;
-	FileEntry_t *list;
+	uint32_t size;				// Size of file in the list
+	FileEntry_t *list; 			// List of file entires in the directory
 } FileList_t;
+
+typedef struct
+{
+	uint32_t base_sector;
+	uint32_t current_sector;
+	uint32_t base_cluster;
+	uint32_t current_cluster;
+} CurrentDir_t;
 
 // ------------ PROTOTYPES ------------
 
@@ -92,14 +108,20 @@ typedef struct
 // void ata_write_word(uint32_t addr, uint16_t offset, uint16_t value);
 // void ata_write_dword(uint32_t addr, uint16_t offset, uint32_t value);
 
+// DEBUG FUNC
+void fat32_dump_bs(BootSector_t bs);
+
 void swap_endian_int(uint16_t *val);
 void swap_endian_long(uint32_t *val);
 
 BootSector_t fat32_parse_bootsector();
 FileEntry_t  fat32_parse_fileentry(uint8_t *sector, uint16_t offset);
 
-uint8_t clean_filename(uint8_t *filename);
+void clean_filename(char *filename, char *cleaned_filename);
 FileList_t fat32_list_files(BootSector_t bs);
 
+FilePointer_t fat32_openfile(BootSector_t bs, char *filename);
+
 uint32_t fat32_get_next_cluster_value(BootSector_t bs);
+uint32_t fat32_get_sector_from_cluster(BootSector_t bs, uint32_t cluster);
 #endif

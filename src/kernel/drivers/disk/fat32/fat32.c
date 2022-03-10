@@ -11,8 +11,7 @@
 #include "../../../stdlibs/stdlib.h"
 #include "../../screen/print/print.h"
 
-uint32_t g_current_dir_sector = 0;
-uint32_t g_current_cluster_value = 0;
+CurrentDir_t g_current_dir;
 
 /**
  * @brief Change the endiannes of a value (16 bits)
@@ -46,13 +45,16 @@ BootSector_t fat32_parse_bootsector()
 	bs.sec_per_clus 	= ata_read_byte(0, SEC_PER_CLUS_OFFSET);
 	bs.rsvd_sec_cnt 	= ata_read_word(0, RSVD_SEC_CNT_OFFSET);
 	bs.num_FATs 		= ata_read_byte(0, NUM_FATS_OFFSET);
-	bs.FATSz32 		= ata_read_dword(0, FATSZ32_OFFSET);
-	bs.root_clus 	= ata_read_dword(0, ROOT_CLUS_OFFSET);
+	bs.FATSz32 			= ata_read_dword(0, FATSZ32_OFFSET);
+	bs.root_clus 		= ata_read_dword(0, ROOT_CLUS_OFFSET);
 
 	bs.root_dir_sector = bs.rsvd_sec_cnt + (bs.num_FATs * bs.FATSz32);
 
-	g_current_dir_sector = bs.root_dir_sector;
-	g_current_cluster_value = bs.root_clus;
+	g_current_dir.base_sector    = bs.root_dir_sector;
+	g_current_dir.current_sector = bs.root_dir_sector;
+
+	g_current_dir.base_cluster = bs.root_clus;
+	g_current_dir.current_cluster = bs.root_clus;
 
 	return bs;
 }
@@ -66,18 +68,22 @@ BootSector_t fat32_parse_bootsector()
 FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 {
 	FileEntry_t tmpEntry;
+	uint16_t fst_clus_hi;
+	uint16_t fst_clus_lo;
 
-	PARSE_INFO_CHAR(tmpEntry, Name,         sector, NAME_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, attr, sector, ATTR_OFFSET + offset)
-	PARSE_INFO_CHAR(tmpEntry, crt_time_tenth, sector, CRT_TIME_TENTH_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, crt_time,      sector, CRT_TIME_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, crt_date,      sector, CRT_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, lst_acc_date,   sector, LST_ACC_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_hi,    sector, FST_CLUS_HI_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, wrt_time,      sector, WRT_TIME_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, wrt_date,      sector, WRT_DATE_OFFSET + offset)
-	PARSE_INFO_INT (tmpEntry, fst_clus_lo,    sector, FST_CLUS_LO_OFFSET + offset)
-	PARSE_INFO_LONG(tmpEntry, file_size,     sector, FILE_SIZE_OFFSET + offset)
+	memcpy(&fst_clus_hi, sector + FST_CLUS_HI_OFFSET + offset, 2);
+	memcpy(&fst_clus_lo, sector + FST_CLUS_LO_OFFSET + offset, 2);
+	tmpEntry.fst_clus = fst_clus_hi << 16 | fst_clus_lo;
+
+	PARSE_INFO_CHAR(tmpEntry, Name,         	sector, NAME_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, attr,				sector, ATTR_OFFSET + offset)
+	PARSE_INFO_CHAR(tmpEntry, crt_time_tenth,	sector, CRT_TIME_TENTH_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_time,			sector, CRT_TIME_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, crt_date,			sector, CRT_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, lst_acc_date,		sector, LST_ACC_DATE_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_time,			sector, WRT_TIME_OFFSET + offset)
+	PARSE_INFO_INT (tmpEntry, wrt_date,			sector, WRT_DATE_OFFSET + offset)
+	PARSE_INFO_LONG(tmpEntry, file_size,		sector, FILE_SIZE_OFFSET + offset)
 
 	return tmpEntry;
 }
@@ -85,10 +91,11 @@ FileEntry_t fat32_parse_fileentry(uint8_t *sector, uint16_t offset)
 /**
  * @brief Change the filename read on the disk to make it more readable
  * TEXT    TXT --> text.txt
- * @param uint8_t* Pointer to the sector of the disk where the entry is
- * @return uint8_t Number of char in the cleaned filename
+ * @param char* Pointer to the original filename
+ * @param char* Pointer where the new clean filename will be written
+ * @return void
  */
-uint8_t clean_filename(uint8_t* filename)
+void clean_filename(char* filename, char* cleaned_filename)
 {
 	uint8_t tmpChar;
 	uint8_t cleanCharCnt = 0;
@@ -99,7 +106,7 @@ uint8_t clean_filename(uint8_t* filename)
 		// ADDS THE . ONCE WE'VE CLEANED THE NAME
 		if (i == 8)
 		{
-			filename[cleanCharCnt] = '.';
+			cleaned_filename[cleanCharCnt] = '.';
 			cleanCharCnt++;
 		}
 
@@ -114,14 +121,13 @@ uint8_t clean_filename(uint8_t* filename)
 		// If the char is not a space add it to the final filename
 		if (tmpChar != ' ')
 		{
-			filename[cleanCharCnt] = tmpChar;
+			cleaned_filename[cleanCharCnt] = tmpChar;
 			cleanCharCnt++;
 		}
 	}
 
 	// Add the zero terminal
-	filename[cleanCharCnt] = 0;
-	return cleanCharCnt;
+	cleaned_filename[cleanCharCnt] = 0;
 }
 
 /**
@@ -139,16 +145,19 @@ FileList_t fat32_list_files(BootSector_t bs)
 	// Allocate enough space for 16 files. Realloc if needed
 	FileEntry_t *file_list_array = malloc(sizeof(FileEntry_t) * (bs.byts_per_sec / 32) * 2);
 
+	g_current_dir.current_sector = g_current_dir.base_sector;
+	g_current_dir.current_cluster = g_current_dir.base_cluster;
+
 	do
 	{
 		entry_offset = 0;
 		// Iterates all the sector inside a cluster
 		for (uint32_t sec = 0; sec < bs.sec_per_clus; sec++)
 		{
-			ata_read_sector(g_current_dir_sector + sec, 1, sector);
+			ata_read_sector(g_current_dir.current_sector + sec, 1, sector);
 
 			// The first entry of the Root Directory is not a real entry and needs to be skipped
-			if (g_current_dir_sector + sec == bs.root_dir_sector) {entry_offset = 32;}
+			if (g_current_dir.current_sector + sec == bs.root_dir_sector) {entry_offset = 32;}
 
 			for (entry_offset; entry_offset < bs.byts_per_sec; entry_offset+=32)
 			{
@@ -164,7 +173,11 @@ FileList_t fat32_list_files(BootSector_t bs)
 				}
 				else if (file_list_array[file_count].Name[0] == 0xE5);	// Deleted file
 				else if (file_list_array[file_count].Name[2] == 0x00);	// Long file entry not supported
-				else {file_count++;}									// Valid file
+				else // Valid file
+				{
+					clean_filename(file_list_array[file_count].Name, file_list_array[file_count].clean_name);
+					file_count++;
+				}
 			}
 		}
 		
@@ -174,9 +187,9 @@ FileList_t fat32_list_files(BootSector_t bs)
 		// Change the current cluster
 		if (next_cluster < FAT_EOC)
 		{
-			g_current_cluster_value = next_cluster;
+			g_current_dir.current_cluster = next_cluster;
 			// ! MIGHT WANT TO CHANGE THAT
-			g_current_dir_sector = bs.root_dir_sector + ((g_current_cluster_value - 2) * bs.sec_per_clus);
+			g_current_dir.current_sector = fat32_get_sector_from_cluster(bs, g_current_dir.current_cluster);
 		}
 
 	} while (next_cluster < FAT_EOC);
@@ -191,12 +204,67 @@ FileList_t fat32_list_files(BootSector_t bs)
 }
 
 /**
- * @brief Checks the FAT Table and returns the next cluster value (of g_current_cluster_value)
+ * @brief Checks the FAT Table and returns the next cluster value (of g_current_dir.current_cluster)
  * @param BootSector_t bs
  * @return uint32_t
  */
 uint32_t fat32_get_next_cluster_value(BootSector_t bs)
 {
-	uint32_t fat_offset = g_current_cluster_value * 4;
+	uint32_t fat_offset = g_current_dir.current_cluster * 4;
 	return FAT_MASK & ata_read_dword(bs.rsvd_sec_cnt + (fat_offset / bs.byts_per_sec), fat_offset % bs.byts_per_sec);
+}
+
+uint32_t fat32_get_sector_from_cluster(BootSector_t bs, uint32_t cluster)
+{
+	return bs.root_dir_sector + ((cluster - 2) * bs.sec_per_clus);
+}
+
+FilePointer_t fat32_openfile(BootSector_t bs, char* filename)
+{
+	// TODO: CHANGE DIRECTORY IF THE FILENAME IS A PATH, ONCE IT'S SUPPORTED
+
+	FileList_t flist = fat32_list_files(bs);
+	FilePointer_t f;
+
+	for (uint16_t i = 0; i < flist.size; i++)
+	{
+		if (strcmp(flist.list[i].clean_name, filename) == 0)
+		{
+			f.baseCluster 		= flist.list[i].fst_clus;
+			f.currentCluster 	= flist.list[i].fst_clus;
+			f.currentSector 	= fat32_get_sector_from_cluster(bs, f.baseCluster);
+			f.fileSize 			= flist.list[i].file_size;
+			f.Offset 			= 0;
+
+			return f;
+		}
+	}
+
+	memset(&f, 0, sizeof(FilePointer_t)); // Returns a struct full of 0
+	return f;
+}
+
+void fat32_dump_bs(BootSector_t bs)
+{
+	k_print("byts_per_sec		");
+	k_print_number(bs.byts_per_sec);
+	k_print("\n");
+	k_print("sec_per_clus		");
+	k_print_number(bs.sec_per_clus);
+	k_print("\n");
+	k_print("rsvd_sec_cnt		");
+	k_print_number(bs.rsvd_sec_cnt);
+	k_print("\n");
+	k_print("num_FATs			");
+	k_print_number(bs.num_FATs);
+	k_print("\n");
+	k_print("FATSz32			");
+	k_print_number(bs.FATSz32);
+	k_print("\n");
+	k_print("root_clus			");
+	k_print_number(bs.root_clus);
+	k_print("\n");
+	k_print("root_dir_sector	");
+	k_print_number(bs.root_dir_sector);
+	k_print("\n");
 }

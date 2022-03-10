@@ -99,3 +99,28 @@ splitted_tokens* str_split(const char* str, const char delim)
 	}
 	return sk;
 }
+
+ * @brief compares the string pointed to, by str1 to the string pointed to by str2.
+ *
+ * @param const char *str1
+ * @param const char *str2
+ * @return int
+ * 
+ * - if Return value < 0 then it indicates str1 is less than str2.
+ * - if Return value > 0 then it indicates str2 is less than str1.
+ * - if Return value = 0 then it indicates str1 is equal to str2.
+ */
+int strcmp(const char *str1, const char *str2)
+{
+	while (*str1)
+	{
+		// Loops through all the chars and adds the diff
+		// between them to the tot variable.
+
+		if (*str1 != *str2){break;}
+		str1++;
+		str2++;
+	}
+
+	return *str1 - *str2;
+}
